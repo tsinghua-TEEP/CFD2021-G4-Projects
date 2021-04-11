@@ -1,0 +1,28 @@
+{
+    "files.exclude": {
+        "**/.git": false,
+        "**/.svn": true,
+        "**/.hg": true,
+        "**/CVS": true,
+        "**/.DS_Store": true,
+        "**/.classpath": true,
+        "**/.project": true,
+        "**/.settings": true,
+        "**/.factorypath": true,
+        "**/*.olean": true,
+        "**/.history": true,
+        "**/README.md": true,
+        "**/.gitmodules": false,
+        "**/.gitignore": false,
+        "**/.ipynb_checkpoints": true,
+        "**/.metals": true,
+        "**/submodules": false,
+        "**/test": true,
+        "**/misc": true,
+        "**/desktop.ini": true,
+        "**/.gitattributes": false,
+        "**/.wakatime-project": true,
+        "SDP/Queuesdp.prj": true
+    },
+    "explorerExclude.backup": null
+}
