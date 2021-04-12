@@ -1,0 +1,7 @@
+name: CFD2021-G4-Projects
+dependencies:
+  - numpy
+  - pandas
+channels:
+  - defaults
+prefix: ./.conda/env/CFD2021-G4-Projects
