@@ -11,7 +11,7 @@
         "**/.factorypath": true,
         "**/*.olean": true,
         "**/.history": true,
-        "**/README.md": true,
+        "**/README.md": false,
         "**/.gitmodules": true,
         "**/.gitignore": true,
         "**/.ipynb_checkpoints": true,
@@ -27,10 +27,11 @@
         "**/.editorconfig": true,
         "**/Manifest.toml": true,
         "**/Project.toml": true,
-        "**/.conda": true,
+        "**/.conda": false,
         "**/conda-environment.yml": true,
         "**/setup.py": true
     },
     "explorerExclude.backup": null,
-    "julia.environmentPath": "c:\\Users\\Fang Tci\\Documents\\吴昊-华为本研\\CFD2021-G4-Projects"
+    "jupyter.jupyterServerType": "local",
+    "python.pythonPath": "C:\\Users\\Fang Tci\\Documents\\吴昊-华为本研\\CFD2021-G4-Projects\\.conda\\env\\CFD2021-G4-Projects\\python.exe"
 }

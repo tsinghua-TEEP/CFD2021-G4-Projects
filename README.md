@@ -1,5 +1,7 @@
 # CFD2021-G4-Projects
 
+[![wakatime](https://wakatime.com/badge/github/tsinghua-TEEP/CFD2021-G4-Projects.svg)](https://wakatime.com/badge/github/tsinghua-TEEP/CFD2021-G4-Projects)
+
 This repository dedicates to the team projects
 related to the CFD course, 2021 spring, at SAS, THU.  
 Efforts are contributed by a joined 4-member group.  

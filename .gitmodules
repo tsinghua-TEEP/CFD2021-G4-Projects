@@ -4,3 +4,6 @@
 [submodule "submodules/PyAero"]
 	path = submodules/PyAero
 	url = https://github.com/chiefenne/PyAero.git
+[submodule "submodules/submodules/SchwarzChristoffel.jl"]
+	path = submodules/submodules/SchwarzChristoffel.jl
+	url = https://github.com/jdeldre/SchwarzChristoffel.jl.git

@@ -17,9 +17,15 @@ $\left(\xi, \eta\right) \in \left[0, 1\right]^2$;
 从而, 当我们的网格大小是 $M_x \times M_y$,
 我们求解的点总是
 $\xi_i = \frac{i}{M_x}, \eta_j = \frac{j}{M_y}$;
-对于非周期边界, 总是使下标从 1 开始;
+对于非周期边界, 一般使下标从 1 开始;
 对于周期边界和有物理意义的边界,
-通过 [OffsetArray](https://github.com/JuliaArrays/OffsetArrays.jl) 使用从 0 开始的下标.
+通过 [OffsetArray](https://github.com/JuliaArrays/OffsetArrays.jl) 使用从 0 开始的下标
+(有一定的 overhead, 但对于一份教学代码是完全可以接受的);
+**注意: ``OffsetArray`` 对应「场」的几何图像; 在类似数组拼接的任务上, 隐含使用了「列表」的几何图像, 应当转换为普通数组操作, 再化为 ``OffsetArray``.**  
+由于我们只使用 1 阶, 2 阶有限差分格式,
+使用 [FiniteDiff.jl](https://github.com/JuliaDiff/FiniteDiff.jl)
+比使用 [FiniteDifferences.jl](https://github.com/JuliaDiff/FiniteDifferences.jl)
+要更合适.
 
 ### 圆环
 
