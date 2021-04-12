@@ -46,4 +46,14 @@ end
 """
 To be done.
 """
-function solve_inverse_poisson_jacobi end
+function inversed_poisson_jacobi_iterate end
+
+"""
+To be done.
+"""
+function dirichlet_boundary_conform end
+
+"""
+To be done.
+"""
+function nuemann_boundary_conform end
