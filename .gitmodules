@@ -1,3 +1,6 @@
 [submodule "submodules/CFD_Julia"]
 	path = submodules/CFD_Julia
 	url = https://github.com/surajp92/CFD_Julia.git
+[submodule "submodules/PyAero"]
+	path = submodules/PyAero
+	url = https://github.com/chiefenne/PyAero.git
