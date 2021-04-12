@@ -13,7 +13,7 @@
         "**/.history": true,
         "**/README.md": true,
         "**/.gitmodules": true,
-        "**/.gitignore": true,
+        "**/.gitignore": false,
         "**/.ipynb_checkpoints": true,
         "**/.metals": true,
         "**/submodules": false,

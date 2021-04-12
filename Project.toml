@@ -1,9 +1,12 @@
 [deps]
+BinaryBuilder = "12aac903-9f7c-5d81-afc2-d9565ea332ae"
 CSV = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"
 Calculus = "49dc2e85-a5d0-5ad3-a950-438e2897f1b9"
 DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
+DifferentialEquations = "0c46a032-eb83-5123-abaf-570d42b7fbaa"
 FiniteDiff = "6a86dc24-6348-571c-b903-95158fe2bd41"
 FiniteDifferences = "26cc04aa-876d-5657-8c51-4c34ba976000"
 IJulia = "7073ff75-c697-5162-941a-fcdaad2a7d2a"
 OffsetArrays = "6fe1bfb0-de20-5000-8ca7-80f57d26f881"
 Pluto = "c3e4b0f8-55cb-11ea-2926-15256bba5781"
+SparsityDetection = "684fba80-ace3-11e9-3d08-3bc7ed6f96df"

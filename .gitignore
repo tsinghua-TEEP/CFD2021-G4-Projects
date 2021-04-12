@@ -296,7 +296,8 @@ octave-workspace
 [#]*#
 *~
 *$
-*.bak
+**/~$*
+# *.bak
 *.diff
 .*.sw[nop]
 .sw[nop]
