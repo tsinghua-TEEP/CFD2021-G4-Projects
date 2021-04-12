@@ -46,8 +46,7 @@ git clone git@github.com:tsinghua-TEEP/CFD2021-G4-Projects.git
     ```
     - **Git submodules**: some of the dependencies are git submodules. In the repo, from the OS shell execute
     ```shell
-    git submodule init
-    git submodule update
+    git submodule update --init --recursive
     ```
 
 ## Contents
