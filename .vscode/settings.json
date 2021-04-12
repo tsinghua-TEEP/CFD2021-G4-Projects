@@ -1,6 +1,6 @@
 {
     "files.exclude": {
-        "**/.git": false,
+        "**/.git": true,
         "**/.svn": true,
         "**/.hg": true,
         "**/CVS": true,
@@ -11,18 +11,23 @@
         "**/.factorypath": true,
         "**/*.olean": true,
         "**/.history": true,
-        "**/README.md": true,
-        "**/.gitmodules": false,
-        "**/.gitignore": false,
+        "**/README.md": false,
+        "**/.gitmodules": true,
+        "**/.gitignore": true,
         "**/.ipynb_checkpoints": true,
         "**/.metals": true,
         "**/submodules": false,
         "**/test": true,
         "**/misc": true,
         "**/desktop.ini": true,
-        "**/.gitattributes": false,
+        "**/.gitattributes": true,
         "**/.wakatime-project": true,
-        "SDP/Queuesdp.prj": true
+        "SDP/Queuesdp.prj": true,
+        "**/.vscode": true,
+        "**/.editorconfig": true,
+        "**/Manifest.toml": true,
+        "**/Project.toml": true
     },
-    "explorerExclude.backup": null
+    "explorerExclude.backup": null,
+    "julia.environmentPath": "c:\\Users\\Fang Tci\\Documents\\吴昊-华为本研\\CFD2021-G4-Projects"
 }
