@@ -9,7 +9,8 @@ using Plots
 """
     yt0012(ξ)
 
-Computes ``yₜ`` of NACA0012 airfoils from the normalized chord position ``ξ=x/c``.
+Computes ``yₜ`` (i.e., the half-thickness relative to the chord)
+of NACA0012 airfoils from the normalized chord position ``ξ=x/c``.
 
 Additionally defined upon ``[1, 1.005]`` for a 2-order smooth closure.
 
@@ -41,3 +42,8 @@ function yt0012(ξ)
      0
   end)
 end
+
+"""
+To be done.
+"""
+function solve_inverse_poisson_jacobi end

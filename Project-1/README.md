@@ -1,5 +1,58 @@
 # The first team project of the CFD course.
 
+对下列两种几何形状, 通过求解椭圆型方程生成贴体网格.
+
+- [ ] 在直径为15的圆内,有一个直径为2的圆, 二者中心重合.
+- [ ] NACA0012翼型(尖尾缘). 远场形状为圆形或者半圆与矩形组合, 直径是机翼弦长的5倍.
+
+## Implementation details
+
+对于要求的两种场景, 首先进行解析网格生成, 然后再进行椭圆网格生成.
+要注意, 椭圆生成中要求解的是经反变换的 Poisson 方程;
+这是一个非线性程度很高的椭圆型方程,
+因此最好首先经验地得到不错的解析网格, 再使用椭圆方法.
+
+为了实现一个通用的网格生成器, 总是认为计算平面的计算域是
+$\left(\xi, \eta\right) \in \left[0, 1\right]^2$;
+从而, 当我们的网格大小是 $M_x \times M_y$,
+我们求解的点总是
+$\xi_i = \frac{i}{M_x}, \eta_j = \frac{j}{M_y}$;
+对于非周期边界, 总是使下标从 1 开始;
+对于周期边界和有物理意义的边界,
+通过 [OffsetArray](https://github.com/JuliaArrays/OffsetArrays.jl) 使用从 0 开始的下标.
+
+### 圆环
+
+很容易写出此时的亚纯映射:
+
+$$\begin{aligned}&
+\begin{cases}
+  \xi  = \frac{\theta}{2\pi} = \frac{1}{2\pi}\arctan{\left(x,y\right)}\\
+  \eta = \frac{\ln{{\;  r  \;}/R_\text{i}  }}{   \ln{    R_\text{e}    /R_\text{i}}}
+       = \frac{\ln{{(x^2+y^2)}/R_\text{i}^2}}{2\;\ln{\;\;R_\text{e}\;\;/R_\text{i}}}
+\end{cases} \quad
+\begin{cases}
+  \theta = 2\pi \xi\\
+  r      = \left(\frac{R_\text{e}}{R_\text{i}}\right)^\eta\!R_\text{i}
+\end{cases} \\&
+\begin{cases}
+  x = r \cos{\theta}
+    = \left(\frac{R_\text{e}}{R_\text{i}}\right)^\eta\!R_\text{i} \cos{2\pi \xi}\\
+  y = r \sin{\theta}
+    = \left(\frac{R_\text{e}}{R_\text{i}}\right)^\eta\!R_\text{i} \sin{2\pi \xi}
+\end{cases}
+\end{aligned}$$
+
+### NACA0012
+
+如果生成 O 型网格, 则应当选择圆形远场. 应当平滑地封闭尾缘.  
+如果生成 C 型网格, 则应当选择矩形远场. 可以任意地封闭尾缘, 包括使用尖尾缘.  
+此外存在翼形的对齐问题:
+公开资料中多将尾缘对齐到圆心/原点, 但实际上这一选择看来是相当任意的.
+我们约定在不进行实际流场计算时, 总是将前缘对齐到圆心/原点.
+
+此外, 考虑到我们本次计算的是 00xx 对称翼形, 只对上半平面进行计算.
+
 ## References
 - [Guide](http://www.people.virginia.edu/~rjr/mae672/projects/GridGeneration.pdf) from a similar course at Virginia U., intended for a FORTRAN implementation.
 - P.R. Eiseman. [*Grid Generation for Fluid Mechanics Computations*](https://doi.org/10.1146/annurev.fl.17.010185.002415). Ann. Rev. Fluid Mech. 1985. 17: 487-522.
