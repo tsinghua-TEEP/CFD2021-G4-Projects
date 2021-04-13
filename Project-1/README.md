@@ -29,9 +29,9 @@ $\xi_i = \frac{i}{M_x}, \eta_j = \frac{j}{M_y}$;
 
 ### 圆环
 
-很容易写出此时的亚纯映射:
+很容易写出此时的亚纯映射 (参见同目录下的 ``README.ipynb``)
 
-$$\begin{aligned}&
+<!-- $$\begin{aligned}&
 \begin{cases}
   \xi  = \frac{\theta}{2\pi} = \frac{1}{2\pi}\arctan{\left(x,y\right)}\\
   \eta = \frac{\ln{{\;  r  \;}/R_\text{i}  }}{   \ln{    R_\text{e}    /R_\text{i}}}
@@ -47,7 +47,7 @@ $$\begin{aligned}&
   y = r \sin{\theta}
     = \left(\frac{R_\text{e}}{R_\text{i}}\right)^\eta\!R_\text{i} \sin{2\pi \xi}
 \end{cases}
-\end{aligned}$$
+\end{aligned}$$ -->
 
 ### NACA0012
 
