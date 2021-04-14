@@ -16,8 +16,12 @@ using Pkg
 Pkg.activate(normpath(joinpath(@__DIR__, "../..")))
 using BenchmarkTools
 
-temp_v = ([0,0.5,1], [0,0.5,1])
-@btime tuplejoin((axes(v) for v in temp_v)...)
+# include("../../src/misc-util.jl")
+# using .__CFD2021__misc_util__: tuplejoin
+# temp_v = ([0,0.5,1], [0,0.5,1])
+# temp_t = (axes(v) for v in temp_v)
+# @btime tuplejoin(temp_t...)
 
 include("../src/transfinite-interpolate.jl")
-transfinite_interpolate_2d(([0,0.5,1], [0,0.5,1]), ([0,0.5,1], [0,0.5,1]))
+res = @btime transfinite_interpolate_2d(([0,0.5,1], [0,0.5,1]), ([1,1.5,2], [1,1.5,2]))
+@show res

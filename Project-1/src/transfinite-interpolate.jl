@@ -98,10 +98,9 @@ function transfinite_interpolate_2d(
 
     # loop Version
     interpolated_array = Array{Float64}(undef, (length(v) for v in v_lo)...)
-    println(interpolated_array, "\n", tuplejoin((axes(v) for v in v_lo)...))
+    # println(interpolated_array, "\n", tuplejoin((axes(v) for v in v_lo)...))
     interpolated_array = OffsetArray(interpolated_array, tuplejoin((axes(v) for v in v_lo)...))
-    for u in Iterators.product([eachindex(v) for v in v_lo])
-      println(u)
+    for u in CartesianIndices(interpolated_array)#= #= Deprecated =# Iterators.product(IndexCartesian(), [eachindex(v) for v in v_lo]...) =#
       interpolated_array[u] =
      #= linear-part  from  edges      bilinear-part  from  vertices         =#
         (1-u[2]/M[2])*v_lo[1][u[1]] - (1-u[1]/M[1])*(1-u[2]/M[2])*v_cr[1,1] +

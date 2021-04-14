@@ -14,5 +14,6 @@
 module __CFD2021__misc_util__
 # as suggested by https://discourse.julialang.org/t/efficient-tuple-concatenation/5398
 @inline tuplejoin(x::Tuple, y::Tuple, z...) = (x..., tuplejoin(y, z...)...)
+@inline tuplejoin(x::Tuple, y::Tuple) = (x..., y...)
 @inline tuplejoin(t::Tuple) = t
 end
