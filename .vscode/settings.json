@@ -17,7 +17,7 @@
         "**/.ipynb_checkpoints": true,
         "**/.metals": true,
         "**/submodules": true,
-        "**/test": true,
+        "**/test": false,
         "**/misc": true,
         "**/desktop.ini": true,
         "**/.gitattributes": true,
@@ -29,7 +29,8 @@
         "**/Project.toml": true,
         "**/.conda": true,
         "**/conda-environment.yml": true,
-        "**/setup.py": true
+        "**/setup.py": true,
+        "**/README.ipynb": false
     },
     "explorerExclude.backup": null,
     "jupyter.jupyterServerType": "local",
