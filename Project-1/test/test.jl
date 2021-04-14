@@ -14,6 +14,7 @@
 
 using Pkg
 Pkg.activate(normpath(joinpath(@__DIR__, "../..")))
+using Plots
 using BenchmarkTools
 
 # include("../../src/misc-util.jl")
@@ -23,5 +24,9 @@ using BenchmarkTools
 # @btime tuplejoin(temp_t...)
 
 include("../src/transfinite-interpolate.jl")
-res = @btime transfinite_interpolate_2d(([0,0.5,1], [0,0.5,1]), ([1,1.5,2], [1,1.5,2]))
+v_lo = ([0,0.5,1], [0,0.5,1]); v_hi = ([1,1.5,2], [1,1.5,2])
+interpolated_array = Array{Float64}(undef, (length(v) for v in v_lo)...)
+interpolated_array = OffsetArray(interpolated_array, tuplejoin((axes(v) for v in v_lo)...))
+@btime transfinite_interpolate_2d!(interpolated_array, v_lo, v_hi)
+res = @btime transfinite_interpolate_2d(v_lo, v_hi)
 @show res

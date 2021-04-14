@@ -18,8 +18,6 @@
   Description: TBD
 =#
 
-using Plots
-
 """
     yt0012(ξ)
 

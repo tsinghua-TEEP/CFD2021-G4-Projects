@@ -20,10 +20,8 @@
 
 using StaticArrays
 using OffsetArrays
-using Plots
 include("../../src/misc-util.jl")
 using .__CFD2021__misc_util__: tuplejoin
-
 
 """
     transfinite_interpolate_2d(f_lo, f_hi[, v_cr])
@@ -78,31 +76,69 @@ function transfinite_interpolate_2d(
     end
     return interpolating_function
 end
+
+"""
+    transfinite_interpolate_2d(v_lo, v_hi[, v_cr])
+    transfinite_interpolate_2d!(interpolated_array, v_lo, v_hi[, v_cr])
+
+Return a interpolated array defined on a discretization of ``[0, 1]²``.
+
+**Notice**: the in-place version does not check dimension-compatibility of its inputs.
+
+TODO: generalize to higher dimensions.
+
+# Arguments
+- `v_lo::Tuple{Vector{<: Real}, Vector{<: Real}}`: a pair of vectors.
+- `v_hi::Tuple{Vector{<: Real}, Vector{<: Real}}`: a pair of vectors.
+- `v_cr::SMatrix{2, 2, <: Real} = nothing`: (optional) values to take at the corners;
+    use average of edge values if not provided.
+    Still, in practical use you should make sure the ends of the edges meet.
+
+# Output
+- `interpolated_array::Array{Real, 2}`
+
+# Examples
+```jldoctest
+julia> transfinite_interpolate_2d(([0,0.5,1], [0,0.5,1]), ([1,1.5,2], [1,1.5,2]))
+3×3 Matrix{Real}:
+ 0.0  0.5  1.0
+ 0.5  1.0  1.5
+ 1.0  1.5  2.0
+```
+"""
 function transfinite_interpolate_2d(
     v_lo::Tuple{Vector{T}, Vector{S}} where {T <: Real, S <: Real},
     v_hi::Tuple{Vector{T}, Vector{S}} where {T <: Real, S <: Real},
     v_cr::Union{Nothing, SMatrix{2, 2, T} where T <: Real} = nothing)::Array{Real, 2}
 
-    #= check dimension-compatibility =#
+    #= check dimension-compatibility before allocating anything =#
     length(v_lo) == length(v_hi) || throw(
         DimensionMismatch(" incompatible grid specification ($(length(v_lo))-d at one end but $(length(v_hi))-d at the other)."))
     N = length(v_lo); errmsg = "" #= In this function, dimensions are always indexed from 1, but not so for each axis of them =#
     for dim in eachindex(v_lo)  if ! (axes(v_lo[dim]) == axes(v_hi[dim]))
         errmsg *= "grid mismatch in dimension $(dim) ($(axes(v_lo[dim])) at one end but $(axes(v_hi[dim])) at the other)."
     end end; errmsg == "" || throw(DimensionMismatch(errmsg))
+
+    interpolated_array = Array{Float64}(undef, (length(v) for v in v_lo)...)
+    interpolated_array = OffsetArray(interpolated_array, tuplejoin((axes(v) for v in v_lo)...))
+    transfinite_interpolate_2d!(interpolated_array, v_lo, v_hi, v_cr)
+    return interpolated_array
+end
+function transfinite_interpolate_2d!(
+    interpolated_array::OffsetArray,
+    v_lo::Tuple{Vector{T}, Vector{S}} where {T <: Real, S <: Real},
+    v_hi::Tuple{Vector{T}, Vector{S}} where {T <: Real, S <: Real},
+    v_cr::Union{Nothing, SMatrix{2, 2, T} where T <: Real} = nothing)::Array{Real, 2}
+
     if typeof(v_cr) <: Nothing # e.g, the following lines still assumes range ``1:2``.
         v_cr = SA[(v_lo[1][begin]+v_lo[2][begin])/2 (v_lo[1][ end ]+v_hi[2][begin])/2
                   (v_hi[1][begin]+v_lo[2][ end ])/2 (v_hi[1][ end ]+v_hi[2][ end ])/2]
-    end
-    M = [length(v)-1 for v in v_lo] # this is only for scaling, and never for iterating
+    end; M = [length(v)-1 for v in v_lo] # this is only for scaling, and never for iterating
 
     # loop Version
-    interpolated_array = Array{Float64}(undef, (length(v) for v in v_lo)...)
-    # println(interpolated_array, "\n", tuplejoin((axes(v) for v in v_lo)...))
-    interpolated_array = OffsetArray(interpolated_array, tuplejoin((axes(v) for v in v_lo)...))
-    for u in CartesianIndices(interpolated_array)#= #= Deprecated =# Iterators.product(IndexCartesian(), [eachindex(v) for v in v_lo]...) =#
+    for u in CartesianIndices(interpolated_array) #= #= Deprecated =# Iterators.product(IndexCartesian(), [eachindex(v) for v in v_lo]...) =#
       interpolated_array[u] =
-     #= linear-part  from  edges      bilinear-part  from  vertices         =#
+      #= linear-part   from   edges      bilinear-part   from   vertices    =#
         (1-u[2]/M[2])*v_lo[1][u[1]] - (1-u[1]/M[1])*(1-u[2]/M[2])*v_cr[1,1] +
         (  u[2]/M[2])*v_hi[1][u[1]] - (  u[1]/M[1])*(1-u[2]/M[2])*v_cr[1,2] +
         (1-u[1]/M[1])*v_lo[2][u[2]] - (1-u[1]/M[1])*(  u[2]/M[2])*v_cr[2,1] +
@@ -110,14 +146,3 @@ function transfinite_interpolate_2d(
     end
     return interpolated_array
 end
-
-
-"""
-To be done.
-"""
-function dirichlet_boundary_conform end
-
-"""
-To be done.
-"""
-function nuemann_boundary_conform end
