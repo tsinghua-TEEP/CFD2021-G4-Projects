@@ -63,8 +63,8 @@ using .__CFD2021__misc_util__: tuplejoin
 
 include("../src/transfinite-interpolate.jl")
 import .transfinite_interpolate: transfinite_interpolate_2d!, transfinite_interpolate_2d
-v_lo = ([0,0.5,1], [0,0.5,1]); v_hi = ([1,1.5,2], [1,1.5,2])
-interpolated_array = Array{Float64}(undef, (length(v) for v in v_lo)...)
-@btime transfinite_interpolate_2d!(interpolated_array, v_lo, v_hi)
-res = @btime transfinite_interpolate_2d(v_lo, v_hi)
-@show res
+# v_lo = ([LinRange(0, 1, 10^4)...], [LinRange(0, 1, 10^4)...]); v_hi = ([LinRange(1, 2, 10^4)...], [LinRange(1, 2, 10^4)...])
+# interpolated_array = @btime Array{Float64}(undef, (length(v) for v in v_lo)...) # 20.500 μs (7 allocations: 762.94 MiB)
+# @btime transfinite_interpolate_2d!(interpolated_array, v_lo, v_hi) # 1.535 s (1 allocation: 96 bytes)
+# res = @btime transfinite_interpolate_2d(v_lo, v_hi) # 7.581 s (100000005 allocations: 2.98 GiB)
+# @show res

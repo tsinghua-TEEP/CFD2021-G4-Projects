@@ -23,7 +23,7 @@ module elliptic_grid_gen
 """
 To be done.
 """
-function inverted_poisson_jacobi_step(arr, ε=1e-10)
+function inverted_poisson_jacobi_step(arr)
 end
 
 """

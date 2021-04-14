@@ -16,7 +16,7 @@
         "**/.gitignore": true,
         "**/.ipynb_checkpoints": true,
         "**/.metals": true,
-        "**/submodules": true,
+        "**/submodules": false,
         "**/test": false,
         "**/misc": true,
         "**/desktop.ini": true,
@@ -30,7 +30,8 @@
         "**/.conda": true,
         "**/conda-environment.yml": true,
         "**/setup.py": true,
-        "**/README.ipynb": true
+        "**/README.ipynb": true,
+        "**/LICENSE": true
     },
     "explorerExclude.backup": null,
     "jupyter.jupyterServerType": "local",
