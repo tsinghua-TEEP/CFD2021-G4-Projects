@@ -11,13 +11,8 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
-using Pkg
-Pkg.activate(normpath(joinpath(@__DIR__, "../..")))
-using BenchmarkTools
-
-temp_v = ([0,0.5,1], [0,0.5,1])
-@btime tuplejoin((axes(v) for v in temp_v)...)
-
-include("../src/transfinite-interpolate.jl")
-transfinite_interpolate_2d(([0,0.5,1], [0,0.5,1]), ([0,0.5,1], [0,0.5,1]))
+module __CFD2021__misc_util__
+# as suggested by https://discourse.julialang.org/t/efficient-tuple-concatenation/5398
+@inline tuplejoin(x::Tuple, y::Tuple, z...) = (x..., tuplejoin(y, z...)...)
+@inline tuplejoin(t::Tuple) = t
+end
