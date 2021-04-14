@@ -374,6 +374,18 @@ git-tree-sha1 = "537c988076d001469093945f3bd0b300b8d3a7f3"
 uuid = "dc8bdbbb-1ca9-579f-8c36-e416f6a65cce"
 version = "1.0.1"
 
+[[Cxx]]
+deps = ["BinaryProvider", "Libdl", "REPL"]
+git-tree-sha1 = "71728149f62225470a4ae4260536a98a5009997c"
+uuid = "a0b5b9ef-44b7-5148-a2d1-f6db19f3c3d2"
+version = "0.4.0"
+
+[[CxxWrap]]
+deps = ["Libdl", "MacroTools", "libcxxwrap_julia_jll"]
+git-tree-sha1 = "95196cd23b6135d92079a6de33e1d522cc4cd2a4"
+uuid = "1f15a43c-97ca-5a2a-ae31-89f07a497df4"
+version = "0.11.2"
+
 [[DSP]]
 deps = ["FFTW", "IterTools", "LinearAlgebra", "Polynomials", "Random", "Reexport", "SpecialFunctions", "Statistics"]
 git-tree-sha1 = "2a63cb5fc0e8c1f0f139475ef94228c7441dc7d0"
@@ -1596,6 +1608,12 @@ git-tree-sha1 = "0af826be249c6751a3e783c07b8cd3034f508943"
 uuid = "fc669557-7ec9-5e45-bca9-462afbc28879"
 version = "0.2.0"
 
+[[PkgTemplates]]
+deps = ["Dates", "InteractiveUtils", "LibGit2", "Mustache", "Parameters", "Pkg", "REPL", "UUIDs"]
+git-tree-sha1 = "b83b3fd341fe01eca461c02006e29c9085d11eae"
+uuid = "14b8a8f1-9102-5b29-a752-f990bacb7fe1"
+version = "0.7.16"
+
 [[PkgVersion]]
 deps = ["Pkg"]
 git-tree-sha1 = "a7a7e1a88853564e551e4eba8650f8c38df79b37"
@@ -2508,6 +2526,12 @@ deps = ["Artifacts", "Bzip2_jll", "FreeType2_jll", "FriBidi_jll", "JLLWrappers",
 git-tree-sha1 = "acc685bcf777b2202a904cdcb49ad34c2fa1880c"
 uuid = "0ac62f75-1d6f-5e53-bd7c-93b484bb37c0"
 version = "0.14.0+4"
+
+[[libcxxwrap_julia_jll]]
+deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
+git-tree-sha1 = "e3834bc4f268a1ae2f687054707ce52795c9b47a"
+uuid = "3eaa8342-bff7-56a5-9981-c04077f7cee7"
+version = "0.8.6+0"
 
 [[libfdk_aac_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]

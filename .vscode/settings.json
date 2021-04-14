@@ -30,7 +30,7 @@
         "**/.conda": true,
         "**/conda-environment.yml": true,
         "**/setup.py": true,
-        "**/README.ipynb": false
+        "**/README.ipynb": true
     },
     "explorerExclude.backup": null,
     "jupyter.jupyterServerType": "local",
