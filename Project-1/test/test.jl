@@ -14,16 +14,17 @@
 
 using Pkg
 Pkg.activate(normpath(joinpath(@__DIR__, "../..")))
-using Plots
+using Plots, OffsetArrays
 using BenchmarkTools
 
-# include("../../src/misc-util.jl")
-# using .__CFD2021__misc_util__: tuplejoin
+include("../../src/misc-util.jl")
+using .__CFD2021__misc_util__: tuplejoin
 # temp_v = ([0,0.5,1], [0,0.5,1])
 # temp_t = (axes(v) for v in temp_v)
 # @btime tuplejoin(temp_t...)
 
 include("../src/transfinite-interpolate.jl")
+import .transfinite_interpolate: transfinite_interpolate_2d!, transfinite_interpolate_2d
 v_lo = ([0,0.5,1], [0,0.5,1]); v_hi = ([1,1.5,2], [1,1.5,2])
 interpolated_array = Array{Float64}(undef, (length(v) for v in v_lo)...)
 interpolated_array = OffsetArray(interpolated_array, tuplejoin((axes(v) for v in v_lo)...))

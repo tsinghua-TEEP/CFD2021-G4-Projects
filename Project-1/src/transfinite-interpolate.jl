@@ -18,6 +18,8 @@
   Description: TBD
 =#
 
+module transfinite_interpolate
+
 using StaticArrays
 using OffsetArrays
 include("../../src/misc-util.jl")
@@ -146,3 +148,5 @@ function transfinite_interpolate_2d!(
     end
     return interpolated_array
 end
+
+end # module transfinite_interpolate
