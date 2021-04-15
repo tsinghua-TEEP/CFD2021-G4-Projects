@@ -31,7 +31,7 @@ $\xi_i = \frac{i}{M_x}, \eta_j = \frac{j}{M_y}$;
 
 ### 圆环
 
-很容易写出此时的亚纯映射 (参见同目录下的 ``README.ipynb``)
+很容易写出此时的亚纯映射 (参见本目录的 [Jupyter 笔记本](https://github.com/tsinghua-TEEP/CFD2021-G4-Projects/blob/main/Project-1/README.ipynb) 中的说明)
 
 <!-- $$\begin{aligned}&
 \begin{cases}
