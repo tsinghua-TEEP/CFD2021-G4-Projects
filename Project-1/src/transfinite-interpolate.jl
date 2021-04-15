@@ -153,16 +153,17 @@ function transfinite_interpolate_2d!( # for regular Arrays
         v_cr = SA[(v_lo[1][begin]+v_lo[2][begin])/2 (v_lo[1][ end ]+v_hi[2][begin])/2
                   (v_hi[1][begin]+v_lo[2][ end ])/2 (v_hi[1][ end ]+v_hi[2][ end ])/2]
     end; M = [length(v)-1 for v in v_lo] # this is only for scaling, and never for iterating
-
+    
     # loop Version
     for u in CartesianIndices(interpolated_array) #= #= Deprecated =# Iterators.product(IndexCartesian(), [eachindex(v) for v in v_lo]...) =#
       interpolated_array[u] =
       #= linear-part   from   edges      bilinear-part   from   vertices    =#
-        (1-u[2]/M[2])*v_lo[1][u[1]] - (1-u[1]/M[1])*(1-u[2]/M[2])*v_cr[1,1] +
-        (  u[2]/M[2])*v_hi[1][u[1]] - (  u[1]/M[1])*(1-u[2]/M[2])*v_cr[1,2] +
-        (1-u[1]/M[1])*v_lo[2][u[2]] - (1-u[1]/M[1])*(  u[2]/M[2])*v_cr[2,1] +
-        (  u[1]/M[1])*v_hi[2][u[2]] - (  u[1]/M[1])*(  u[2]/M[2])*v_cr[2,2]
+        (1-(u[2]-1)/M[2])*v_lo[1][u[1]] - (1-(u[1]-1)/M[1])*(1-(u[2]-1)/M[2])*v_cr[1,1] +
+        (  (u[2]-1)/M[2])*v_hi[1][u[1]] - (  (u[1]-1)/M[1])*(1-(u[2]-1)/M[2])*v_cr[1,2] +
+        (1-(u[1]-1)/M[1])*v_lo[2][u[2]] - (1-(u[1]-1)/M[1])*(  (u[2]-1)/M[2])*v_cr[2,1] +
+        (  (u[1]-1)/M[1])*v_hi[2][u[2]] - (  (u[1]-1)/M[1])*(  (u[2]-1)/M[2])*v_cr[2,2]
     end
+    
     return interpolated_array
 end
 function transfinite_interpolate_2d!( # for OffsetArrays
