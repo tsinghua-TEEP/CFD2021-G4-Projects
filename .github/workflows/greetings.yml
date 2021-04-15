@@ -1,0 +1,13 @@
+name: Greetings
+
+on: [pull_request, issues]
+
+jobs:
+  greeting:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/first-interaction@v1
+      with:
+        repo-token: ${{ secrets.GITHUB_TOKEN }}
+        issue-message: '感谢你提出的 issue~ 如果对此问题有什么有帮助的意见, 希望你可以在评论里及时提出. 如果你解决了问题, 欢迎随时提起PR.'
+        pr-message: '感谢你提交的代码~ 你可以 @ 一个人来 review 你的代码.'
