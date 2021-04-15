@@ -136,5 +136,4 @@ for u in axes(interpolated_x)[ end ]  plot!(p,interpolated_x[:,u], interpolated_
 for u in axes(interpolated_x)[begin]  plot!(p,interpolated_x[u,:],-interpolated_y[u,:], label = nothing, color = myblue); end
 for u in axes(interpolated_x)[ end ]  plot!(p,interpolated_x[:,u],-interpolated_y[:,u], label = nothing, color = myblue); end
 plot!(p, yt0012, 0, 1, label = nothing, color = :red)
-display(p)
-@show p
+savefig(normpath(joinpath(@__DIR__, "img/tf-hO.svg"))) # display(p)
