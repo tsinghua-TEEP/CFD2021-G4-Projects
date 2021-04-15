@@ -19,7 +19,7 @@ using BenchmarkTools
 using Plots
 using OffsetArrays
 
-myblue = RGB(0.368417, 0.506779, 0.709798)
+myblue = RGB(0.368417, 0.506779, 0.709798) # <==> 94, 129, 181 (the default style in Wolfram Mathematica)
 
 """
     yt0012(ξ)
@@ -133,7 +133,7 @@ interpolated_y = Array{Float64}(undef, (length(v) for v in y_lo)...);
 @btime transfinite_interpolate_2d!(interpolated_y, y_lo, y_hi)
 for u in axes(interpolated_x)[begin]  plot!(p,interpolated_x[u,:], interpolated_y[u,:], label = nothing, color = myblue); end
 for u in axes(interpolated_x)[ end ]  plot!(p,interpolated_x[:,u], interpolated_y[:,u], label = nothing, color = myblue); end
-for u in axes(interpolated_x)[begin]  plot!(p,interpolated_x[u,:],-interpolated_y[u,:], label = nothing, color = myblue); end
-for u in axes(interpolated_x)[ end ]  plot!(p,interpolated_x[:,u],-interpolated_y[:,u], label = nothing, color = myblue); end
+# for u in axes(interpolated_x)[begin]  plot!(p,interpolated_x[u,:],-interpolated_y[u,:], label = nothing, color = myblue); end
+# for u in axes(interpolated_x)[ end ]  plot!(p,interpolated_x[:,u],-interpolated_y[:,u], label = nothing, color = myblue); end
 plot!(p, yt0012, 0, 1, label = nothing, color = :red)
-savefig(normpath(joinpath(@__DIR__, "img/tf-hO.svg"))) # display(p)
+display(p) # savefig(normpath(joinpath(@__DIR__, "img/tf-hO.svg")))
