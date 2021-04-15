@@ -31,7 +31,8 @@
         "**/conda-environment.yml": true,
         "**/setup.py": true,
         "**/README.ipynb": true,
-        "**/LICENSE": true
+        "**/LICENSE": true,
+        "**/.github": true
     },
     "explorerExclude.backup": null,
     "jupyter.jupyterServerType": "local",
