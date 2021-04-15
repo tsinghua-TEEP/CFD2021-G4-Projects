@@ -58,7 +58,7 @@ Base.@pure function yt0012(ξ::T where T <: Real)
   end)
 end
 
-const Mx, My = 100+1, 10+1
+const Mx, My = 100+1, 20+1
 
 include("../../src/misc-util.jl")
 using .__CFD2021__misc_util__: tuplejoin
@@ -91,25 +91,50 @@ import .transfinite_interpolate: transfinite_interpolate_2d!, transfinite_interp
 ```
 """
 
-# x_lo = ([LinRange(0, 1, Mx)...], [LinRange(0, 0, My)...]); x_hi = ([LinRange(0, 1, Mx)...], [LinRange(1, 1, My)...]);
-# y_lo = ([LinRange(0, 0, Mx)...], [LinRange(0, 1, My)...]); y_hi = ([LinRange(1, 1, Mx)...], [LinRange(0, 1, My)...]);
-x_lo = @btime ([ξ^2 for ξ in LinRange( 0, 1, Mx)], [LinRange(0,-5, My)...]);
-y_lo = @btime (yt0012.(                x_lo[1]  ), [LinRange(0, 0, My)...]);
-x_hi = @btime (5cospi.(      LinRange( 1, 0, Mx)), [LinRange(1, 5, My)...]);
-y_hi = @btime (5sinpi.(      LinRange( 1, 0, Mx)), [LinRange(0, 0, My)...]);
-interpolated_x = @btime Array{Float64}(undef, (length(v) for v in x_lo)...);
-interpolated_y = @btime Array{Float64}(undef, (length(v) for v in y_lo)...);
+"""
+- example of a cartesian grid;
+```jldoctest
+  x_lo = ([LinRange(0, 1, Mx)...], [LinRange(0, 0, My)...]); x_hi = ([LinRange(0, 1, Mx)...], [LinRange(1, 1, My)...]);
+  y_lo = ([LinRange(0, 0, Mx)...], [LinRange(0, 1, My)...]); y_hi = ([LinRange(1, 1, Mx)...], [LinRange(0, 1, My)...]);
+```
+"""
+
+"""
+- example of a half-O grid aroundNACA0012;
+"""
+x_lo = ([sinpi(ξ)^2 for ξ in LinRange( 0, .5, Mx)],
+        -exp.(LinRange(0, log(6), My)) .+ 1       );
+y_lo = (yt0012.(x_lo[1])                          ,
+        [LinRange(0, 0, My)...]                   );
+x_hi = (5cospi.(LinRange( 1, 0, Mx))              ,
+        +exp.(LinRange(0, log(5), My))            );
+y_hi = (5sinpi.(LinRange( 1, 0, Mx))              ,
+        [LinRange(0, 0, My)...]                   );
+
+"""
+- example of a whole-O grid aroundNACA0012;
+```jldoctest
+  x_lo = ([         sinpi.(LinRange(-.5,0, Mx)).^2;          sinpi.(LinRange(0, .5, Mx)).^2],
+             exp.(LinRange(0, log(5), My)                  )   );
+  y_lo = ([-yt0012.(sinpi.(LinRange(-.5,0, Mx)).^2); yt0012.(sinpi.(LinRange(0, .5, Mx)).^2)],
+          [LinRange(0, 0, My)...]);
+  x_hi = (5cospi.(LinRange( 2, 0, 2Mx)),
+             exp.(LinRange(0, log(5), My)                  )   );
+  y_hi = (5sinpi.(LinRange( 2, 0, 2Mx)),
+          [LinRange(0, 0, My)...]);
+```
+"""
+
+p = plot(xlims = (-5, 5), ylims = (-5, 5), aspect_ratio = :equal)
+# p = plot(xlims = (-.6, .6), ylims = (0, .5), aspect_ratio = :equal)
+interpolated_x = Array{Float64}(undef, (length(v) for v in x_lo)...);
+interpolated_y = Array{Float64}(undef, (length(v) for v in y_lo)...);
 @btime transfinite_interpolate_2d!(interpolated_x, x_lo, x_hi)
 @btime transfinite_interpolate_2d!(interpolated_y, y_lo, y_hi)
-
-# p = plot(xlims = (-5, 5), ylims = (0, 5), aspect_ratio = :equal)
-p = plot(xlims = (-.1, 1.1), ylims = (0, .5), aspect_ratio = :equal)
-for u in axes(interpolated_x)[begin]
-    plot!(p,interpolated_x[u,:],interpolated_y[u,:], label = nothing, color = myblue)
-end
-for u in axes(interpolated_x)[ end ]
-    plot!(p,interpolated_x[:,u],interpolated_y[:,u], label = nothing, color = myblue)
-end
+for u in axes(interpolated_x)[begin]  plot!(p,interpolated_x[u,:], interpolated_y[u,:], label = nothing, color = myblue); end
+for u in axes(interpolated_x)[ end ]  plot!(p,interpolated_x[:,u], interpolated_y[:,u], label = nothing, color = myblue); end
+for u in axes(interpolated_x)[begin]  plot!(p,interpolated_x[u,:],-interpolated_y[u,:], label = nothing, color = myblue); end
+for u in axes(interpolated_x)[ end ]  plot!(p,interpolated_x[:,u],-interpolated_y[:,u], label = nothing, color = myblue); end
 plot!(p, yt0012, 0, 1, label = nothing, color = :red)
 display(p)
 @show p
