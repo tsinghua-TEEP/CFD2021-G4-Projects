@@ -3,6 +3,7 @@
 [![wakatime](https://wakatime.com/badge/github/tsinghua-TEEP/CFD2021-G4-Projects.svg)](https://wakatime.com/badge/github/tsinghua-TEEP/CFD2021-G4-Projects)
 [![CMake](https://github.com/tsinghua-TEEP/CFD2021-G4-Projects/actions/workflows/cmake.yml/badge.svg)](https://github.com/tsinghua-TEEP/CFD2021-G4-Projects/actions/workflows/cmake.yml)
 [![Python package with Conda](https://github.com/tsinghua-TEEP/CFD2021-G4-Projects/actions/workflows/python-package-conda.yml/badge.svg)](https://github.com/tsinghua-TEEP/CFD2021-G4-Projects/actions/workflows/python-package-conda.yml)
+[![codecov](https://codecov.io/gh/tsinghua-TEEP/CFD2021-G4-Projects/branch/main/graph/badge.svg?token=9R7SWYU9W5)](https://codecov.io/gh/tsinghua-TEEP/CFD2021-G4-Projects)
 <!-- [![Dependabot Status](https://api.dependabot.com/badges/status?host=github&repo=tsinghua-TEEP/CFD2021-G4-Projects)](https://dependabot.com) !-->
 
 This repository dedicates to the team projects
