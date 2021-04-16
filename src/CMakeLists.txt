@@ -14,4 +14,4 @@ aux_source_directory(. SRC)
 
 source_group(SOURCE\ FILES FILES ${SRC})
 
-add_executable(CFD2021Projects ${SRC}
+add_executable(CFD2021Projects ${SRC})
