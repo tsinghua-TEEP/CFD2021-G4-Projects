@@ -1,4 +1,4 @@
-name: julia-format-pr
+name: Format Julia code on pull request
 on:
   schedule:
     - cron: '0 0 * * *'
