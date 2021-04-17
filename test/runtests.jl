@@ -1,5 +1,4 @@
 # Copyright 2021 Gravifer
-# Copyright 2021 Gravifer
 # 
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,9 +11,5 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
-# Entry-point file of the project.
-# can be used for top-tier tests.
-module CFD2021Projects
-greet() = println("Hello world!")
-end # module CFD2021Projects
+using Test
+@test true
