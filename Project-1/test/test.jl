@@ -39,23 +39,23 @@ julia> yt0012(0.13)
 0.051193437032115506
 ```
 """
-Base.@pure function yt0012(ξ::T where T <: Real)
-  ε = 0.0050544107511712
-  return 5 * 0.12 *  (
-  if    0 <= ξ <= 1
-     0.2969 * sqrt(ξ)  -
-     0.1260 *      ξ   -
-     0.3516 *      ξ^2 +
-     0.2843 *      ξ^3 -
-     0.1015 *      ξ^4
-  elseif 1 < ξ <= 1+ε # 2-order smooth joining of the tail edge.
-     0.03423616658680458 * sqrt(1+ε - ξ)   +
-     0.12491972188290168 *     (1+ε - ξ)   +
-    11.579398976610927   *     (1+ε - ξ)^2 +
-    12.21202728162769    *     (1+ε - ξ)^3
-  else
-     0
-  end)
+Base.@pure function yt0012(ξ::T where {T<:Real})
+    ε = 0.0050544107511712
+    return 5 * 0.12 *  (
+        if    0 <= ξ <= 1
+        0.2969 * sqrt(ξ)  -
+        0.1260 *      ξ   -
+        0.3516 *      ξ^2 +
+        0.2843 *      ξ^3 -
+        0.1015 *      ξ^4
+        elseif 1 < ξ <= 1+ε # 2-order smooth joining of the tail edge.
+        0.03423616658680458 * sqrt(1+ε - ξ)   +
+        0.12491972188290168 *     (1+ε - ξ)   +
+        11.579398976610927   *     (1+ε - ξ)^2 +
+        12.21202728162769    *     (1+ε - ξ)^3
+        else
+            0
+        end)
 end
 
 const Mx, My = 100+1, 20+1
@@ -102,14 +102,10 @@ import .transfinite_interpolate: transfinite_interpolate_2d!, transfinite_interp
 """
 - example of a half-O grid aroundNACA0012;
 """
-x_lo = ([sinpi(ξ)^2 for ξ in LinRange( 0, .5, Mx)],
-        -exp.(LinRange(0, log(6), My)) .+ 1       );
-y_lo = (yt0012.(x_lo[1])                          ,
-        [LinRange(0, 0, My)...]                   );
-x_hi = (5cospi.(LinRange( 1, 0, Mx))              ,
-        +exp.(LinRange(0, log(5), My))            );
-y_hi = (5sinpi.(LinRange( 1, 0, Mx))              ,
-        [LinRange(0, 0, My)...]                   );
+x_lo = ([sinpi(ξ)^2 for ξ in LinRange(0, 0.5, Mx)], -exp.(LinRange(0, log(6), My)) .+ 1);
+y_lo = (yt0012.(x_lo[1]), [LinRange(0, 0, My)...]);
+x_hi = (5cospi.(LinRange(1, 0, Mx)), +exp.(LinRange(0, log(5), My)));
+y_hi = (5sinpi.(LinRange(1, 0, Mx)), [LinRange(0, 0, My)...]);
 
 """
 - example of a whole-O grid aroundNACA0012;
@@ -125,7 +121,7 @@ y_hi = (5sinpi.(LinRange( 1, 0, Mx))              ,
 ```
 """
 
-p = plot(xlims = (-5, 5), ylims = (-5, 5), aspect_ratio = :equal)
+p = plot(; xlims=(-5, 5), ylims=(-5, 5), aspect_ratio=:equal)
 # p = plot(xlims = (-.6, .6), ylims = (0, .5), aspect_ratio = :equal)
 interpolated_x = Array{Float64}(undef, (length(v) for v in x_lo)...);
 interpolated_y = Array{Float64}(undef, (length(v) for v in y_lo)...);
@@ -135,5 +131,5 @@ for u in axes(interpolated_x)[begin]  plot!(p,interpolated_x[u,:], interpolated_
 for u in axes(interpolated_x)[ end ]  plot!(p,interpolated_x[:,u], interpolated_y[:,u], label = nothing, color = myblue); end
 # for u in axes(interpolated_x)[begin]  plot!(p,interpolated_x[u,:],-interpolated_y[u,:], label = nothing, color = myblue); end
 # for u in axes(interpolated_x)[ end ]  plot!(p,interpolated_x[:,u],-interpolated_y[:,u], label = nothing, color = myblue); end
-plot!(p, yt0012, 0, 1, label = nothing, color = :red)
+plot!(p, yt0012, 0, 1; label=nothing, color=:red)
 display(p) # savefig(normpath(joinpath(@__DIR__, "img/tf-hO.svg")))

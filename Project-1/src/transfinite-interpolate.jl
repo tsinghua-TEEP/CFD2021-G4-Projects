@@ -56,21 +56,20 @@ julia> interp_func((0.5,0.5))
 3.0
 ```
 """
-function transfinite_interpolate_2d(
-    f_lo::Tuple{Function, Function},
-    f_hi::Tuple{Function, Function},
-    v_cr::Union{Nothing, SMatrix{2, 2}} = nothing)::Function
+function transfinite_interpolate_2d(f_lo::Tuple{Function,Function},
+                                    f_hi::Tuple{Function,Function};
+                                    v_cr::Union{Nothing,SMatrix{2,2}}=nothing)::Function
     #= handling of optionals suggested by
        https://stackoverflow.com/questions/42499528/julia-convention-for-optional-arguments;
        though Base.Void is deprecated and now called Nothing instead, as pointed out by
        https://discourse.julialang.org/t/void-not-defined-version-problem/14183 =#
     if typeof(v_cr) <: Nothing
-        v_cr = SA[(f_lo[1](  0  )+f_lo[2](  0  ))/2 (f_lo[1](  1  )+f_hi[2](  0  ))/2
-                  (f_hi[1](  0  )+f_lo[2](  1  ))/2 (f_hi[1](  1  )+f_hi[2](  1  ))/2]
+        v_cr = SA[(f_lo[1](0) + f_lo[2](0))/2 (f_lo[1](1) + f_hi[2](0))/2
+                  (f_hi[1](0) + f_lo[2](1))/2 (f_hi[1](1) + f_hi[2](1))/2]
     end
-    
-    function interpolating_function(u::NTuple{2, T} where T <: Number):: Number
-     #= linear-part from edges   bilinear-part from vertices =#
+
+    function interpolating_function(u::NTuple{2,T} where {T<:Number})::Number
+        #= linear-part from edges   bilinear-part from vertices =#
         (1-u[2])*f_lo[1](u[1]) - (1-u[1])*(1-u[2])*v_cr[1,1] +
         (  u[2])*f_hi[1](u[1]) - (  u[1])*(1-u[2])*v_cr[1,2] +
         (1-u[1])*f_lo[2](u[2]) - (1-u[1])*(  u[2])*v_cr[2,1] +
@@ -153,25 +152,23 @@ function transfinite_interpolate_2d!( # for regular Arrays
         v_cr = SA[(v_lo[1][begin]+v_lo[2][begin])/2 (v_lo[1][ end ]+v_hi[2][begin])/2
                   (v_hi[1][begin]+v_lo[2][ end ])/2 (v_hi[1][ end ]+v_hi[2][ end ])/2]
     end; M = [length(v)-1 for v in v_lo] # this is only for scaling, and never for iterating
-    
+
     # loop Version
     for u in CartesianIndices(interpolated_array) #= #= Deprecated =# Iterators.product(IndexCartesian(), [eachindex(v) for v in v_lo]...) =#
-      interpolated_array[u] =
-      #= linear-part   from   edges      bilinear-part   from   vertices    =#
+        interpolated_array[u] =
+        #= linear-part   from   edges      bilinear-part   from   vertices    =#
         (1-(u[2]-1)/M[2])*v_lo[1][u[1]] - (1-(u[1]-1)/M[1])*(1-(u[2]-1)/M[2])*v_cr[1,1] +
         (  (u[2]-1)/M[2])*v_hi[1][u[1]] - (  (u[1]-1)/M[1])*(1-(u[2]-1)/M[2])*v_cr[1,2] +
         (1-(u[1]-1)/M[1])*v_lo[2][u[2]] - (1-(u[1]-1)/M[1])*(  (u[2]-1)/M[2])*v_cr[2,1] +
         (  (u[1]-1)/M[1])*v_hi[2][u[2]] - (  (u[1]-1)/M[1])*(  (u[2]-1)/M[2])*v_cr[2,2]
     end
-    
+
     return interpolated_array
 end
-function transfinite_interpolate_2d!( # for OffsetArrays
-    interpolated_array::OffsetArray,
-    v_lo::Tuple{OffsetArray, OffsetArray},
-    v_hi::Tuple{OffsetArray, OffsetArray},
-    v_cr::Union{Nothing, SMatrix{2, 2, T} where T <: Real} = nothing)
-
+function transfinite_interpolate_2d!(interpolated_array::OffsetArray,
+                                     v_lo::Tuple{OffsetArray,OffsetArray},
+                                     v_hi::Tuple{OffsetArray,OffsetArray},
+                                     v_cr::Union{Nothing,SMatrix{2,2,T} where T<:Real}=nothing)
     if typeof(v_cr) <: Nothing # e.g, the following lines still assumes range ``1:2``.
         v_cr = SA[(v_lo[1][begin]+v_lo[2][begin])/2 (v_lo[1][ end ]+v_hi[2][begin])/2
                   (v_hi[1][begin]+v_lo[2][ end ])/2 (v_hi[1][ end ]+v_hi[2][ end ])/2]
@@ -179,8 +176,8 @@ function transfinite_interpolate_2d!( # for OffsetArrays
 
     # loop Version
     for u in CartesianIndices(interpolated_array) #= #= Deprecated =# Iterators.product(IndexCartesian(), [eachindex(v) for v in v_lo]...) =#
-      interpolated_array[u] =
-      #= linear-part   from   edges      bilinear-part   from   vertices    =#
+        interpolated_array[u] =
+        #= linear-part   from   edges      bilinear-part   from   vertices    =#
         (1-u[2]/M[2])*v_lo[1][u[1]] - (1-u[1]/M[1])*(1-u[2]/M[2])*v_cr[1,1] +
         (  u[2]/M[2])*v_hi[1][u[1]] - (  u[1]/M[1])*(1-u[2]/M[2])*v_cr[1,2] +
         (1-u[1]/M[1])*v_lo[2][u[2]] - (1-u[1]/M[1])*(  u[2]/M[2])*v_cr[2,1] +
