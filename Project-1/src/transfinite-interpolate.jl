@@ -117,7 +117,7 @@ function transfinite_interpolate_2d( # for regular Arrays
         DimensionMismatch(" incompatible grid specification ($(length(v_lo))-d at one end but $(length(v_hi))-d at the other)."))
     N = length(v_lo); errmsg = "" #= In this function, dimensions are always indexed from 1, but not so for each axis of them =#
     for dim in eachindex(v_lo)  if ! (axes(v_lo[dim]) == axes(v_hi[dim]))
-            errmsg *= "grid mismatch in dimension $(dim) ($(axes(v_lo[dim])) at one end but $(axes(v_hi[dim])) at the other)."
+        errmsg *= "grid mismatch in dimension $(dim) ($(axes(v_lo[dim])) at one end but $(axes(v_hi[dim])) at the other)."
     end end; errmsg == "" || throw(DimensionMismatch(errmsg))
 
     interpolated_array = Array{Float64}(undef, (length(v) for v in v_lo)...)
