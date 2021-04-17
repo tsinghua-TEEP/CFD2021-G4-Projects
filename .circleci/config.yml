@@ -17,7 +17,7 @@ jobs:
       - checkout
       - run:
           name: Install and Test this package
-          command: julia -e  'using Pkg; Pkg.update(); Pkg.add("CFD2021Projects"); Pkg.build("CFD2021Projects"); Pkg.test("CFD2021Projects", coverage=true);'
+          command: julia -e  'using Pkg; Pkg.update(); Pkg.clone(pwd()); Pkg.build("CFD2021Projects"); Pkg.test("CFD2021Projects", coverage=true);'
       - run:
           name: Process code-coverage
           command: julia -e 'using Pkg; cd(Pkg.dir("CFD2021Projects")); Pkg.add("CFD2021Projects"); using Coverage; coverage = process_folder(); LCOV.writefile("coverage-lcov.info", coverage)'
