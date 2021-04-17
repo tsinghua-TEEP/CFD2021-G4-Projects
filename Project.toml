@@ -1,6 +1,7 @@
 name = "CFD2021Projects"
-authors = ["Gravifer <majh18@mails.tsinghua.edu.cn>"]
+uuid = "6e2486e0-9f5b-11eb-34c4-a5b80a7b3486"
 version = "0.0.1"
+authors = ["Gravifer <majh18@mails.tsinghua.edu.cn>"]
 
 [deps]
 AbstractTrees = "1520ce14-60c1-5f80-bbc7-55ef81b5835c"
