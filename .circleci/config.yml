@@ -1,11 +1,16 @@
+name: CircleCI
 version: 2.1
+
+variables:
+ - name: projectName
+   value: CFD2021Projects
 
 orbs:
   codecov: codecov/codecov@1.0.2 # need to allow 3rd party orbs in project settings on circleci
   python: circleci/python@0.2.1
 jobs:
   build:
-    working_directory: /root/project/CFD2021-G4-Projects   # Clone into a directory whose name matches your Package.
+    working_directory: /root/project/CFD2021Projects   # Clone into a directory whose name matches your Package.
     docker:
       - image: julia:1.1                # image comes from Docker hub
     steps:
