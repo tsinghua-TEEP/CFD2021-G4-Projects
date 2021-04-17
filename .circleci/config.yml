@@ -22,7 +22,7 @@ jobs:
 #           name: Process and uplode code-coverage
 #           command: julia -e 'using Pkg; Pkg.activate(pwd()); using Coverage; Codecov.submit_local(process_folder())'
 #           env:
-#             super_secret: ${{ secrets.SuperSecret }}
+#             CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
       - run:
           name: Process code-coverage
           command: julia -e 'using Pkg; Pkg.activate(pwd()); using Coverage; coverage = process_folder(); LCOV.writefile("coverage-lcov.info", coverage)'
