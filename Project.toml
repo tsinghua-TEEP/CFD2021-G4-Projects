@@ -5,6 +5,7 @@ version = "0.0.1"
 
 [deps]
 AbstractTrees = "1520ce14-60c1-5f80-bbc7-55ef81b5835c"
+ArgTools = "0dad84c5-d112-42e6-8d28-ef12dabb789f"
 BenchmarkTools = "6e4b80f9-dd63-53aa-95a3-0cdb28fa8baf"
 BinaryBuilder = "12aac903-9f7c-5d81-afc2-d9565ea332ae"
 CSV = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"
