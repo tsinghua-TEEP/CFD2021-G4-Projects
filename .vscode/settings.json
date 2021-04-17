@@ -32,10 +32,10 @@
         "**/setup.py": true,
         "**/README.ipynb": true,
         "**/LICENSE": true,
-        "**/.github": false,
+        "**/.github": true,
         "**/.deepsource.toml": true,
         "**/.JuliaFormatter.toml": true,
-        "**/.circleci": false,
+        "**/.circleci": true,
         "**/.codecov.yml": true,
         "**/CMakeLists.txt": true
     },
