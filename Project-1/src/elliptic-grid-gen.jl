@@ -23,19 +23,14 @@ module elliptic_grid_gen
 """
 To be done.
 """
-function inverted_poisson_jacobi_step(arr)
-end
-function inverted_poisson_jacobi_step!(arr)
-end
-
+function inverted_poisson_jacobi_step(arr) end
+function inverted_poisson_jacobi_step!(arr) end
 
 """
 To be done.
 """
-function inverted_poisson_jacobi_iterate(arr, ε=1e-10)
-end
-function inverted_poisson_jacobi_iterate!(arr, ε=1e-10)
-end
+function inverted_poisson_jacobi_iterate(arr, ε=1e-10) end
+function inverted_poisson_jacobi_iterate!(arr, ε=1e-10) end
 
 """
 To be done.
