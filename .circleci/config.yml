@@ -18,17 +18,17 @@ jobs:
       - run:
           name: Install and Test this package
           command: julia -e  'using Pkg; Pkg.activate(pwd()); Pkg.update(); Pkg.build(); Pkg.test(; coverage=true);'
-      - run:
-          name: Process and uplode code-coverage
-          command: julia -e 'using Pkg; Pkg.activate(pwd()); using Coverage; Codecov.submit_local(process_folder())'
-          env:
-            CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 #       - run:
-#           name: Process code-coverage
-#           command: julia -e 'using Pkg; Pkg.activate(pwd()); using Coverage; coverage = process_folder(); LCOV.writefile("coverage-lcov.info", coverage)'
-#       - codecov/upload:
-#           file: "coverage-lcov.info"
-#           token: ${{ secrets.CODECOV_TOKEN }}
+#           name: Process and uplode code-coverage
+#           command: julia -e 'using Pkg; Pkg.activate(pwd()); using Coverage; Codecov.submit_local(process_folder())'
+#           env:
+#             CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+      - run:
+          name: Process code-coverage
+          command: julia -e 'using Pkg; Pkg.activate(pwd()); using Coverage; coverage = process_folder(); LCOV.writefile("coverage-lcov.info", coverage)'
+      - codecov/upload:
+          file: "coverage-lcov.info"
+          token: ${CODECOV_TOKEN}
 
 # version: 2.1
 
