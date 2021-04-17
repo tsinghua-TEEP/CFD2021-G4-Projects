@@ -20,7 +20,7 @@ jobs:
           command: julia -e  'using Pkg; Pkg.activate(pwd()); Pkg.update(); Pkg.build(); Pkg.test(; coverage=true);'
       - run:
           name: Process and uplode code-coverage
-          command: julia -e 'using Pkg; Pkg.activate(pwd()); using Coverage; Codecov.submit(process_folder())'
+          command: julia -e 'using Pkg; Pkg.activate(pwd()); using Coverage; Codecov.submit_local(process_folder())'
           env:
             CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 #       - run:
