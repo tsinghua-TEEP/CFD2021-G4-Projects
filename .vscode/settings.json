@@ -17,7 +17,7 @@
         "**/.ipynb_checkpoints": true,
         "**/.metals": true,
         "**/submodules": true,
-        "**/test": false,
+        "**/test": true,
         "**/misc": true,
         "**/desktop.ini": true,
         "**/.gitattributes": true,
@@ -32,7 +32,12 @@
         "**/setup.py": true,
         "**/README.ipynb": true,
         "**/LICENSE": true,
-        "**/.github": true
+        "**/.github": true,
+        "**/.deepsource.toml": true,
+        "**/.JuliaFormatter.toml": true,
+        "**/.circleci": true,
+        "**/.codecov.yml": true,
+        "**/CMakeLists.txt": true
     },
     "explorerExclude.backup": null,
     "jupyter.jupyterServerType": "local",
