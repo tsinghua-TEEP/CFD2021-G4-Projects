@@ -70,10 +70,10 @@ function transfinite_interpolate_2d(f_lo::Tuple{Function,Function},
 
     function interpolating_function(u::NTuple{2,T} where {T<:Number})::Number
         #= linear-part from edges   bilinear-part from vertices =#
-        (1-u[2])*f_lo[1](u[1]) - (1-u[1])*(1-u[2])*v_cr[1,1] +
-        (  u[2])*f_hi[1](u[1]) - (  u[1])*(1-u[2])*v_cr[1,2] +
-        (1-u[1])*f_lo[2](u[2]) - (1-u[1])*(  u[2])*v_cr[2,1] +
-        (  u[1])*f_hi[2](u[2]) - (  u[1])*(  u[2])*v_cr[2,2]
+        return (1 - u[2]) * f_lo[1](u[1]) - (1 - u[1]) * (1 - u[2]) * v_cr[1, 1] +
+               (u[2]) * f_hi[1](u[1]) - (u[1]) * (1 - u[2]) * v_cr[1, 2] +
+               (1 - u[1]) * f_lo[2](u[2]) - (1 - u[1]) * (u[2]) * v_cr[2, 1] +
+               (u[1]) * f_hi[2](u[2]) - (u[1]) * (u[2]) * v_cr[2, 2]
     end
     return interpolating_function
 end
@@ -107,60 +107,77 @@ julia> transfinite_interpolate_2d(([0,0.5,1], [0,0.5,1]), ([1,1.5,2], [1,1.5,2])
  1.0  1.5  2.0
 ```
 """
-function transfinite_interpolate_2d( # for regular Arrays
-    v_lo::Tuple{Vector{T}, Vector{S}} where {T <: Real, S <: Real},
-    v_hi::Tuple{Vector{T}, Vector{S}} where {T <: Real, S <: Real},
-    v_cr::Union{Nothing, SMatrix{2, 2, T} where T <: Real} = nothing)::Array{Real, 2}
+function transfinite_interpolate_2d(v_lo::Tuple{Vector{T},
+                                                Vector{S}} where {T<:Real,S<:Real},
+                                    v_hi::Tuple{Vector{T},
+                                                Vector{S}} where {T<:Real,S<:Real};
+                                    v_cr::Union{Nothing,SMatrix{2,2,T} where T<:Real}=nothing)::Array{Real,
+                                                                                                      2}
 
     #= check dimension-compatibility before allocating anything =#
-    length(v_lo) == length(v_hi) || throw(
-        DimensionMismatch(" incompatible grid specification ($(length(v_lo))-d at one end but $(length(v_hi))-d at the other)."))
-    N = length(v_lo); errmsg = "" #= In this function, dimensions are always indexed from 1, but not so for each axis of them =#
-    for dim in eachindex(v_lo)  if ! (axes(v_lo[dim]) == axes(v_hi[dim]))
-        errmsg *= "grid mismatch in dimension $(dim) ($(axes(v_lo[dim])) at one end but $(axes(v_hi[dim])) at the other)."
-    end end; errmsg == "" || throw(DimensionMismatch(errmsg))
+    length(v_lo) == length(v_hi) ||
+        throw(DimensionMismatch(" incompatible grid specification ($(length(v_lo))-d at one end but $(length(v_hi))-d at the other)."))
+    N = length(v_lo)
+    errmsg = "" #= In this function, dimensions are always indexed from 1, but not so for each axis of them =#
+    for dim in eachindex(v_lo)
+        if !(axes(v_lo[dim]) == axes(v_hi[dim]))
+            errmsg *= "grid mismatch in dimension $(dim) ($(axes(v_lo[dim])) at one end but $(axes(v_hi[dim])) at the other)."
+        end
+    end
+    errmsg == "" || throw(DimensionMismatch(errmsg))
 
     interpolated_array = Array{Float64}(undef, (length(v) for v in v_lo)...)
     transfinite_interpolate_2d!(interpolated_array, v_lo, v_hi, v_cr)
     return interpolated_array
 end
-function transfinite_interpolate_2d( # for OffsetArrays
-    v_lo::Tuple{OffsetArray, OffsetArray},
-    v_hi::Tuple{OffsetArray, OffsetArray},
-    v_cr::Union{Nothing, SMatrix{2, 2, T} where T <: Real} = nothing)::Array{Real, 2}
+function transfinite_interpolate_2d(v_lo::Tuple{OffsetArray,OffsetArray},
+                                    v_hi::Tuple{OffsetArray,OffsetArray};
+                                    v_cr::Union{Nothing,SMatrix{2,2,T} where T<:Real}=nothing)::Array{Real,
+                                                                                                      2}
 
     #= check dimension-compatibility before allocating anything =#
-    length(v_lo) == length(v_hi) || throw(
-        DimensionMismatch(" incompatible grid specification ($(length(v_lo))-d at one end but $(length(v_hi))-d at the other)."))
-    N = length(v_lo); errmsg = "" #= In this function, dimensions are always indexed from 1, but not so for each axis of them =#
-    for dim in eachindex(v_lo)  if ! (axes(v_lo[dim]) == axes(v_hi[dim]))
-        errmsg *= "grid mismatch in dimension $(dim) ($(axes(v_lo[dim])) at one end but $(axes(v_hi[dim])) at the other)."
-    end end; errmsg == "" || throw(DimensionMismatch(errmsg))
+    length(v_lo) == length(v_hi) ||
+        throw(DimensionMismatch(" incompatible grid specification ($(length(v_lo))-d at one end but $(length(v_hi))-d at the other)."))
+    N = length(v_lo)
+    errmsg = "" #= In this function, dimensions are always indexed from 1, but not so for each axis of them =#
+    for dim in eachindex(v_lo)
+        if !(axes(v_lo[dim]) == axes(v_hi[dim]))
+            errmsg *= "grid mismatch in dimension $(dim) ($(axes(v_lo[dim])) at one end but $(axes(v_hi[dim])) at the other)."
+        end
+    end
+    errmsg == "" || throw(DimensionMismatch(errmsg))
 
     interpolated_array = Array{Float64}(undef, (length(v) for v in v_lo)...)
-    interpolated_array = OffsetArray(interpolated_array, tuplejoin((axes(v) for v in v_lo)...))
+    interpolated_array = OffsetArray(interpolated_array,
+                                     tuplejoin((axes(v) for v in v_lo)...))
     transfinite_interpolate_2d!(interpolated_array, v_lo, v_hi, v_cr)
     return interpolated_array
 end
-function transfinite_interpolate_2d!( # for regular Arrays
-    interpolated_array::Array{T, 2}   where  T <: Real,
-    v_lo::Tuple{Vector{T}, Vector{S}} where {T <: Real, S <: Real},
-    v_hi::Tuple{Vector{T}, Vector{S}} where {T <: Real, S <: Real},
-    v_cr::Union{Nothing, SMatrix{2, 2, T} where T <: Real} = nothing)
-
+function transfinite_interpolate_2d!(interpolated_array::Array{T,2} where {T<:Real},
+                                     v_lo::Tuple{Vector{T},
+                                                 Vector{S}} where {T<:Real,S<:Real},
+                                     v_hi::Tuple{Vector{T},
+                                                 Vector{S}} where {T<:Real,S<:Real},
+                                     v_cr::Union{Nothing,SMatrix{2,2,T} where T<:Real}=nothing)
     if typeof(v_cr) <: Nothing # e.g, the following lines still assumes range ``1:2``.
-        v_cr = SA[(v_lo[1][begin]+v_lo[2][begin])/2 (v_lo[1][ end ]+v_hi[2][begin])/2
-                  (v_hi[1][begin]+v_lo[2][ end ])/2 (v_hi[1][ end ]+v_hi[2][ end ])/2]
-    end; M = [length(v)-1 for v in v_lo] # this is only for scaling, and never for iterating
+        v_cr = SA[(v_lo[1][begin] + v_lo[2][begin])/2 (v_lo[1][end] + v_hi[2][begin])/2
+                  (v_hi[1][begin] + v_lo[2][end])/2 (v_hi[1][end] + v_hi[2][end])/2]
+    end
+    M = [length(v) - 1 for v in v_lo] # this is only for scaling, and never for iterating
 
     # loop Version
     for u in CartesianIndices(interpolated_array) #= #= Deprecated =# Iterators.product(IndexCartesian(), [eachindex(v) for v in v_lo]...) =#
         interpolated_array[u] =
         #= linear-part   from   edges      bilinear-part   from   vertices    =#
-        (1-(u[2]-1)/M[2])*v_lo[1][u[1]] - (1-(u[1]-1)/M[1])*(1-(u[2]-1)/M[2])*v_cr[1,1] +
-        (  (u[2]-1)/M[2])*v_hi[1][u[1]] - (  (u[1]-1)/M[1])*(1-(u[2]-1)/M[2])*v_cr[1,2] +
-        (1-(u[1]-1)/M[1])*v_lo[2][u[2]] - (1-(u[1]-1)/M[1])*(  (u[2]-1)/M[2])*v_cr[2,1] +
-        (  (u[1]-1)/M[1])*v_hi[2][u[2]] - (  (u[1]-1)/M[1])*(  (u[2]-1)/M[2])*v_cr[2,2]
+        (1 - (u[2] - 1) / M[2]) * v_lo[1][u[1]] -
+                               (1 - (u[1] - 1) / M[1]) *
+                               (1 - (u[2] - 1) / M[2]) *
+                               v_cr[1, 1] + ((u[2] - 1) / M[2]) * v_hi[1][u[1]] -
+                               ((u[1] - 1) / M[1]) * (1 - (u[2] - 1) / M[2]) * v_cr[1, 2] +
+                               (1 - (u[1] - 1) / M[1]) * v_lo[2][u[2]] -
+                               (1 - (u[1] - 1) / M[1]) * ((u[2] - 1) / M[2]) * v_cr[2, 1] +
+                               ((u[1] - 1) / M[1]) * v_hi[2][u[2]] -
+                               ((u[1] - 1) / M[1]) * ((u[2] - 1) / M[2]) * v_cr[2, 2]
     end
 
     return interpolated_array
@@ -170,18 +187,23 @@ function transfinite_interpolate_2d!(interpolated_array::OffsetArray,
                                      v_hi::Tuple{OffsetArray,OffsetArray},
                                      v_cr::Union{Nothing,SMatrix{2,2,T} where T<:Real}=nothing)
     if typeof(v_cr) <: Nothing # e.g, the following lines still assumes range ``1:2``.
-        v_cr = SA[(v_lo[1][begin]+v_lo[2][begin])/2 (v_lo[1][ end ]+v_hi[2][begin])/2
-                  (v_hi[1][begin]+v_lo[2][ end ])/2 (v_hi[1][ end ]+v_hi[2][ end ])/2]
-    end; M = [length(v)-1 for v in v_lo] # this is only for scaling, and never for iterating
+        v_cr = SA[(v_lo[1][begin] + v_lo[2][begin])/2 (v_lo[1][end] + v_hi[2][begin])/2
+                  (v_hi[1][begin] + v_lo[2][end])/2 (v_hi[1][end] + v_hi[2][end])/2]
+    end
+    M = [length(v) - 1 for v in v_lo] # this is only for scaling, and never for iterating
 
     # loop Version
     for u in CartesianIndices(interpolated_array) #= #= Deprecated =# Iterators.product(IndexCartesian(), [eachindex(v) for v in v_lo]...) =#
         interpolated_array[u] =
         #= linear-part   from   edges      bilinear-part   from   vertices    =#
-        (1-u[2]/M[2])*v_lo[1][u[1]] - (1-u[1]/M[1])*(1-u[2]/M[2])*v_cr[1,1] +
-        (  u[2]/M[2])*v_hi[1][u[1]] - (  u[1]/M[1])*(1-u[2]/M[2])*v_cr[1,2] +
-        (1-u[1]/M[1])*v_lo[2][u[2]] - (1-u[1]/M[1])*(  u[2]/M[2])*v_cr[2,1] +
-        (  u[1]/M[1])*v_hi[2][u[2]] - (  u[1]/M[1])*(  u[2]/M[2])*v_cr[2,2]
+        (1 - u[2] / M[2]) * v_lo[1][u[1]] -
+                               (1 - u[1] / M[1]) * (1 - u[2] / M[2]) * v_cr[1, 1] +
+                               (u[2] / M[2]) * v_hi[1][u[1]] -
+                               (u[1] / M[1]) * (1 - u[2] / M[2]) * v_cr[1, 2] +
+                               (1 - u[1] / M[1]) * v_lo[2][u[2]] -
+                               (1 - u[1] / M[1]) * (u[2] / M[2]) * v_cr[2, 1] +
+                               (u[1] / M[1]) * v_hi[2][u[2]] -
+                               (u[1] / M[1]) * (u[2] / M[2]) * v_cr[2, 2]
     end
     return interpolated_array
 end
