@@ -56,3 +56,6 @@ ab_situ_interp_y = transfinite_interpolate_2d(y_lo, y_hi)
 @test in_situ_interp_y == ab_situ_interp_y != [0.0 0.5 1.0; 0.0 0.5 1.0; 0.0 0.5 1.0]
 @test in_situ_interp_x == ab_situ_interp_x == OffsetArray([0.0 0.0 0.0; 0.5 0.5 0.5; 1.0 1.0 1.0], OffsetArrays.Origin(0))
 @test in_situ_interp_y == ab_situ_interp_y == OffsetArray([0.0 0.5 1.0; 0.0 0.5 1.0; 0.0 0.5 1.0], OffsetArrays.Origin(0))
+
+x_lo = ([LinRange(0, 1, Mx)...], [LinRange(0, 0, My)...]); x_hi = ([LinRange(0, 1, 2Mx+1)...], [LinRange(1, 1, 2My+1)...]);
+@test_throws DimensionMismatch transfinite_interpolate_2d(x_lo, x_hi)
