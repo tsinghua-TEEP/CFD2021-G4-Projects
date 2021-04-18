@@ -25,7 +25,7 @@ jobs:
 #             CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
       - run:
           name: Process code-coverage
-          command: julia -e 'using Pkg; Pkg.activate(pwd()); using Coverage, Glob; coverage = process_folder(); coverage = append!(coverage, vcat(process_folder.(glob(\"**/src/\"))...)); LCOV.writefile("coverage-lcov.info", coverage)'
+          command: julia -e 'using Pkg; Pkg.activate(pwd()); using Coverage, Glob; coverage = process_folder(); coverage = append!(coverage, vcat(process_folder.(glob("**/src/"))...)); LCOV.writefile("coverage-lcov.info", coverage)'
       - codecov/upload:
           file: "coverage-lcov.info"
           token: ${CODECOV_TOKEN}
