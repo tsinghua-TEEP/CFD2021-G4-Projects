@@ -11,7 +11,7 @@ This repository dedicates to the team projects
 related to the CFD course, 2021 spring, at SAS, THU.  
 Efforts are contributed by a joined 4-member group.  
 For practice and performance, we attempt to use the
-[Julia](https://julialang.org) programming langrage in these projects.
+[Julia](https://julialang.org) programming language in these projects.
 
 ## Configuration
 
