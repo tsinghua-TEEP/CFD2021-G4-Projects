@@ -127,7 +127,7 @@ end
 function transfinite_interpolate_2d( # for OffsetArrays
     v_lo::Tuple{OffsetArray, OffsetArray},
     v_hi::Tuple{OffsetArray, OffsetArray},
-    v_cr::Union{Nothing, SMatrix{2, 2, T} where T <: Real} = nothing)::Array{Real, 2}
+    v_cr::Union{Nothing, SMatrix{2, 2, T} where T <: Real} = nothing)::OffsetArray
 
     #= check dimension-compatibility before allocating anything =#
     length(v_lo) == length(v_hi) || throw(

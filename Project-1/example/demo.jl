@@ -60,7 +60,7 @@ end
 
 const Mx, My = 100+1, 20+1
 
-include("../../src/misc-util.jl")
+include(normpath(joinpath(@__DIR__, "../../src/misc-util.jl")))
 using .__CFD2021__misc_util__: tuplejoin
 """
 - usage of ``tuplejoin``:
@@ -71,7 +71,7 @@ using .__CFD2021__misc_util__: tuplejoin
 ```
 """
 
-include("../src/transfinite-interpolate.jl")
+include(normpath(joinpath(@__DIR__, "../src/transfinite-interpolate.jl")))
 import .transfinite_interpolate: transfinite_interpolate_2d!, transfinite_interpolate_2d
 
 """

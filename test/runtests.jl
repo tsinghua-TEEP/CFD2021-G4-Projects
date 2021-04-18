@@ -11,5 +11,14 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+using Pkg
+Pkg.activate(normpath(joinpath(@__DIR__, "..")))
 using Test
-@test true
+
+include(normpath(joinpath(@__DIR__, "../src/misc-util.jl")))
+using .__CFD2021__misc_util__: tuplejoin
+temp_v = ([0,0.5,1], [0,0.5,1])
+temp_t = (axes(v) for v in temp_v)
+@test tuplejoin(temp_t...) == (Base.OneTo(3), Base.OneTo(3))
+
+include(normpath(joinpath(@__DIR__, "../Project-1/test/runtests.jl")))

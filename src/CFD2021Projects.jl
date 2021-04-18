@@ -16,5 +16,6 @@
 # Entry-point file of the project.
 # can be used for top-tier tests.
 module CFD2021Projects
-greet() = println("Hello world!")
+include(normpath(joinpath(@__DIR__, "../Project-1/src/transfinite-interpolate.jl")))
+using .transfinite_interpolate
 end # module CFD2021Projects

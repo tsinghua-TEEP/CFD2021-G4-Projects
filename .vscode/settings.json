@@ -17,7 +17,7 @@
         "**/.ipynb_checkpoints": true,
         "**/.metals": true,
         "**/submodules": true,
-        "**/test": true,
+        "**/test": false,
         "**/misc": true,
         "**/desktop.ini": true,
         "**/.gitattributes": true,
