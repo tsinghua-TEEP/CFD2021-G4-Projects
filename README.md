@@ -41,11 +41,11 @@ git clone git@github.com:tsinghua-TEEP/CFD2021-G4-Projects.git
       from there:
     ```jldoctest
     (@v1.6) pkg> activate .
-    (CFD2021-G4-Projects) pkg> instantiate
+    (CFD2021Projects) pkg> instantiate
     ```
       in case you need to update the dependencies after that, do
     ```jldoctest
-    (CFD2021-G4-Projects) pkg> update; precompile
+    (CFD2021Projects) pkg> update; precompile
     ```
     - **Conda**: in the repo root, from the OS shell execute
     ```shell
