@@ -14,12 +14,19 @@
 
 using Test
 
-include(normpath(joinpath(@__DIR__, "../src/misc-util.jl")))
 include(normpath(joinpath(@__DIR__, "../src/CFD2021Projects.jl")))
-using .__CFD2021__misc_util__: tuplejoin
-@test tuplejoin((1, 2)) == (1, 2)
-temp_v = ([0,0.5,1], [0,0.5,1], [0,0.5,1], [0,0.5,1])
-temp_t = (axes(v) for v in temp_v)
-@test tuplejoin(temp_t...) == (Base.OneTo(3), Base.OneTo(3), Base.OneTo(3), Base.OneTo(3))
+@testset "misc_utils" begin
+    include(normpath(joinpath(@__DIR__, "../src/misc-util.jl")))
 
-include(normpath(joinpath(@__DIR__, "../Project-1/test/runtests.jl")))
+    @testset "tuplejoin" begin
+        using .__CFD2021__misc_util__: tuplejoin
+        @test tuplejoin((1, 2)) == (1, 2)
+        temp_v = ([0,0.5,1], [0,0.5,1], [0,0.5,1], [0,0.5,1])
+        temp_t = (axes(v) for v in temp_v)
+        @test tuplejoin(temp_t...) == (Base.OneTo(3), Base.OneTo(3), Base.OneTo(3), Base.OneTo(3))
+    end # @testset "tuplejoin"
+end # @testset "misc_utils"
+
+@testset "Project-1" begin
+    include(normpath(joinpath(@__DIR__, "../Project-1/test/runtests.jl")))
+end # @testset "Project-1"
