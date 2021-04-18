@@ -24,6 +24,10 @@ using .__CFD2021__misc_util__: tuplejoin
 include("../src/transfinite-interpolate.jl")
 import .transfinite_interpolate: transfinite_interpolate_2d!, transfinite_interpolate_2d
 
+# function group
+interp_func = transfinite_interpolate_2d( (x->2x, y->3y), (x->4x+3, y->2+5y) )
+@test interp_func((0.5,0.5)) == 3.0
+
 # normal group
 x_lo = ([LinRange(0, 1, Mx)...], [LinRange(0, 0, My)...]); x_hi = ([LinRange(0, 1, Mx)...], [LinRange(1, 1, My)...]);
 y_lo = ([LinRange(0, 0, Mx)...], [LinRange(0, 1, My)...]); y_hi = ([LinRange(1, 1, Mx)...], [LinRange(0, 1, My)...]);
