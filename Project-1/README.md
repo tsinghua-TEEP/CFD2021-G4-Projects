@@ -12,7 +12,7 @@
 这是一个非线性程度很高的椭圆型方程,
 因此最好首先经验地得到不错的解析网格, 再使用椭圆方法.
 
-[![tf-demo](https://github.com/tsinghua-TEEP/CFD2021-G4-Projects/blob/main/Project-1/test/img/tf-hO.svg)](https://github.com/tsinghua-TEEP/CFD2021-G4-Projects/blob/main/Project-1/test/img/tf-hO.svg)
+[![tf-demo](https://github.com/tsinghua-TEEP/CFD2021-G4-Projects/blob/main/Project-1/example/img/tf-hO.svg)](https://github.com/tsinghua-TEEP/CFD2021-G4-Projects/blob/main/Project-1/example/demo.jl)
 
 为了实现一个通用的网格生成器, 总是认为计算平面的计算域是
 $\left(\xi, \eta\right) \in \left[0, 1\right]^2$;
