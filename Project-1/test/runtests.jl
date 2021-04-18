@@ -12,12 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-using Pkg
-Pkg.activate(normpath(joinpath(@__DIR__, "../..")))
 using Test
-# using Revise
 using BenchmarkTools
-using Plots
 using OffsetArrays
 
 const Mx, My = 3, 3
