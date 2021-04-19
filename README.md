@@ -15,7 +15,7 @@ For practice and performance, we attempt to use the
 
 ## Configuration
 
-The project is mainly written in [Julia](https://julialang.org), although FORTRAN, C/C++, Python, Wolfram, MATLAB are also marginally used. As CFD is a mature community we utilized various robust tools built by the community, which require user/contributors to do some preparation before setting the project up.
+The project is mainly written in [Julia](https://julialang.org), albeit FORTRAN, C/C++, Python, Wolfram, MATLAB may also marginally used. As CFD is a mature community we utilized various robust tools built by the community, which require user/contributors to do some preparation before setting the project up.
 
 ### Prerequisites
 
