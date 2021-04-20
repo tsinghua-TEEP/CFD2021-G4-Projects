@@ -5,6 +5,7 @@
 [![CircleCI](https://circleci.com/gh/tsinghua-TEEP/CFD2021-G4-Projects.svg?style=shield&circle-token=9b51e15e5ced695a347386f06bdc605e23e7d8e5)](https://github.com/tsinghua-TEEP/CFD2021-G4-Projects/actions)
 [![codecov](https://codecov.io/gh/tsinghua-TEEP/CFD2021-G4-Projects/branch/main/graph/badge.svg?token=9R7SWYU9W5)](https://codecov.io/gh/tsinghua-TEEP/CFD2021-G4-Projects)
 [![wakatime](https://wakatime.com/badge/github/tsinghua-TEEP/CFD2021-G4-Projects.svg)](https://wakatime.com/badge/github/tsinghua-TEEP/CFD2021-G4-Projects)
+[![ColPrac: Contributor's Guide on Collaborative Practices for Community Packages](https://img.shields.io/badge/ColPrac-Contributor's%20Guide-blueviolet)](https://github.com/SciML/ColPrac)
 <!-- [![Dependabot Status](https://api.dependabot.com/badges/status?host=github&repo=tsinghua-TEEP/CFD2021-G4-Projects)](https://dependabot.com) !-->
 
 This repository dedicates to the team projects
