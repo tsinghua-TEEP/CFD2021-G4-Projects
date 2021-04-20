@@ -2,6 +2,7 @@
 
 <!-- [![CMake](https://github.com/tsinghua-TEEP/CFD2021-G4-Projects/actions/workflows/cmake.yml/badge.svg)](https://github.com/tsinghua-TEEP/CFD2021-G4-Projects/actions/workflows/cmake.yml) !-->
 <!-- [![Python package with Conda](https://github.com/tsinghua-TEEP/CFD2021-G4-Projects/actions/workflows/python-package-conda.yml/badge.svg)](https://github.com/tsinghua-TEEP/CFD2021-G4-Projects/actions/workflows/python-package-conda.yml) !-->
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/8ddf95075915482d8708388554f16386)](https://www.codacy.com?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=tsinghua-TEEP/CFD2021-G4-Projects&amp;utm_campaign=Badge_Grade)
 [![CircleCI](https://circleci.com/gh/tsinghua-TEEP/CFD2021-G4-Projects.svg?style=shield&circle-token=9b51e15e5ced695a347386f06bdc605e23e7d8e5)](https://github.com/tsinghua-TEEP/CFD2021-G4-Projects/actions)
 [![codecov](https://codecov.io/gh/tsinghua-TEEP/CFD2021-G4-Projects/branch/main/graph/badge.svg?token=9R7SWYU9W5)](https://codecov.io/gh/tsinghua-TEEP/CFD2021-G4-Projects)
 [![wakatime](https://wakatime.com/badge/github/tsinghua-TEEP/CFD2021-G4-Projects.svg)](https://wakatime.com/badge/github/tsinghua-TEEP/CFD2021-G4-Projects)
