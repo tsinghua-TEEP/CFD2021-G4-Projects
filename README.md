@@ -42,7 +42,7 @@ To use or contribute to the project, these tools should be previously installed:
 
 ### Setup
 
-- Clone the repository with [![Git](https://img.shields.io/static/v1?logo=Git&logoColor=white&label=&message=Git&color=F05032)](https://fortran-lang.org):
+- Clone the repository with [![Git](https://img.shields.io/static/v1?logo=Git&logoColor=white&label=&message=Git&color=F05032)](https://git-scm.com):
 ```shell
 git clone git@github.com:tsinghua-TEEP/CFD2021-G4-Projects.git
 ```
