@@ -16,21 +16,21 @@ jobs:
     docker:
       - image: julia:1.6.0                # image comes from Docker hub
     steps:
-      - restore_cache:
-          name: Restore source code cache
-          keys:
-            - source-{{ .Branch }}-{{ .Revision }}
-            - source-{{ .Branch }}-
-            - source-
+#       - restore_cache:
+#           name: Restore source code cache
+#           keys:
+#             - source-{{ .Branch }}-{{ .Revision }}
+#             - source-{{ .Branch }}-
+#             - source-
       - checkout
-      - run:
-          name: Git GC
-          command: git gc
-      - save_cache:
-          name: Cache source code
-          key: source-v1-{{ .Branch }}-{{ .Revision }}
-          paths:
-            - ".git"
+#       - run:
+#           name: Git GC
+#           command: git gc
+#       - save_cache:
+#           name: Cache source code
+#           key: source-v1-{{ .Branch }}-{{ .Revision }}
+#           paths:
+#             - ".git"
             
       - restore_cache:
           name: Restore Julia artifact cache
