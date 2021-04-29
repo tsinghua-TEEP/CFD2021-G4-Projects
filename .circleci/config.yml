@@ -78,7 +78,7 @@ jobs:
             - julia-cache-
       - run:
           name: Build the package
-          command: julia -e  'using Pkg; Pkg.activate(pwd()); Pkg.build();'
+          command: julia -e  'using Pkg; Pkg.activate(pwd()); Pkg.build(); Pkg.precompile();'
       - save_cache:
           name: Save Julia cache 
           key: julia-cache-{{ arch }}-{{ .Branch }}-{{ checksum "Manifest.toml" }}
