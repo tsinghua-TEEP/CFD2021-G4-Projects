@@ -16,6 +16,8 @@ jobs:
     docker:
       - image: julia:1.6.0                # image comes from Docker hub
     steps:
+      - attach_workspace:
+            at: ..
 #       - restore_cache:
 #           name: Restore source code cache
 #           keys:
@@ -47,7 +49,7 @@ jobs:
           paths:
             - ~/.julia/artifacts
       - persist_to_workspace:
-            root: ~
+            root: ..
             paths:
               - ./CFD2021Projects
               - ./.julia
@@ -58,7 +60,7 @@ jobs:
       - image: julia:1.6.0                # image comes from Docker hub
     steps: 
       - attach_workspace:
-            at: ~
+            at: ..
       - restore_cache:
           name: Restore Julia artifact cache
           keys:
@@ -74,7 +76,7 @@ jobs:
           paths:
             - ~/.julia/artifacts
       - persist_to_workspace:
-            root: ~
+            root: ..
             paths:
               - ./CFD2021Projects
               - ./.julia
@@ -85,7 +87,7 @@ jobs:
       - image: julia:1.6.0                # image comes from Docker hub
     steps:
       - attach_workspace:
-            at: ~
+            at: ..
             
       - restore_cache:
           name: Restore Julia artifact cache
@@ -112,7 +114,7 @@ jobs:
           coverage-reports: 'coverage-lcov.info'
           project-token: ${CODACY_PROJECT_TOKEN}
       - persist_to_workspace:
-            root: ~
+            root: ..
             paths:
               - ./CFD2021Projects
               - ./.julia
