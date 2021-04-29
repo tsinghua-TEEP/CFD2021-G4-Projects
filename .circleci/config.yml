@@ -11,7 +11,7 @@ orbs:
   coverage-reporter: codacy/coverage-reporter@12.1.3
 
 jobs:
-  build:
+  instantiate:
     working_directory: /root/project/CFD2021Projects   # Clone into a directory whose name matches your Package.
     docker:
       - image: julia:1.6.0                # image comes from Docker hub
@@ -39,23 +39,72 @@ jobs:
             - julia-artifacts-{{ arch }}-{{ .Branch }}-
             - julia-artifacts-
       - run:
-          name: Build the package
-          command: julia -e  'using Pkg; Pkg.activate(pwd()); Pkg.update(); Pkg.build();'
+          name: Instantiate the package
+          command: julia -e  'using Pkg; Pkg.activate(pwd()); Pkg.update(); Pkg.instantiate();'
       - save_cache:
           name: Cache Julia artifacts 
           key: julia-artifacts-{{ arch }}-{{ .Branch }}-{{ checksum "Manifest.toml" }}
           paths:
             - ~/.julia/artifacts
+      - store_artifacts:
+            path: yarn.lock
+      - persist_to_workspace:
+            root: ..
+            paths:
+                - CFD2021Projects
+                - ~/.julia
+  build:
+    working_directory: /root/project/CFD2021Projects   # Clone into a directory whose name matches your Package.
+    docker:
+      - image: julia:1.6.0                # image comes from Docker hub
+    steps: 
+      - attach_workspace:
+            at: ..
+      - restore_cache:
+          name: Restore Julia artifact cache
+          keys:
+            - julia-artifacts-{{ arch }}-{{ .Branch }}-{{ checksum "Manifest.toml" }}
+            - julia-artifacts-{{ arch }}-{{ .Branch }}-
+            - julia-artifacts-
+      - run:
+          name: Build the package
+          command: julia -e  'using Pkg; Pkg.activate(pwd()); Pkg.build();'
+      - save_cache:
+          name: Cache Julia artifacts 
+          key: julia-artifacts-{{ arch }}-{{ .Branch }}-{{ checksum "Manifest.toml" }}
+          paths:
+            - ~/.julia/artifacts
+      - store_artifacts:
+            path: yarn.lock
+      - persist_to_workspace:
+            root: ..
+            paths:
+                - CFD2021Projects
+                - ~/.julia
+
+  test:
+    working_directory: /root/project/CFD2021Projects   # Clone into a directory whose name matches your Package.
+    docker:
+      - image: julia:1.6.0                # image comes from Docker hub
+    steps:
+      - attach_workspace:
+            at: ..
             
+      - restore_cache:
+          name: Restore Julia artifact cache
+          keys:
+            - julia-artifacts-{{ arch }}-{{ .Branch }}-{{ checksum "Manifest.toml" }}
+            - julia-artifacts-{{ arch }}-{{ .Branch }}-
+            - julia-artifacts-
       - run:
           name: Test the package
           command: julia -e  'using Pkg; Pkg.activate(pwd()); Pkg.test(; coverage=true);'
+      - save_cache:
+          name: Cache Julia artifacts 
+          key: julia-artifacts-{{ arch }}-{{ .Branch }}-{{ checksum "Manifest.toml" }}
+          paths:
+            - ~/.julia/artifacts
           
-#       - run:
-#           name: Process and uplode code-coverage
-#           command: julia -e 'using Pkg; Pkg.activate(pwd()); using Coverage; Codecov.submit_local(process_folder())'
-#           env:
-#             CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
       - run:
           name: Process code coverage
           command: julia -e 'using Pkg; Pkg.activate(pwd()); using Coverage, Glob; coverage = process_folder(); coverage = append!(coverage, vcat(process_folder.(glob("**/src/"))...)); LCOV.writefile("coverage-lcov.info", coverage)'
@@ -65,6 +114,15 @@ jobs:
       - coverage-reporter/send_report:
           coverage-reports: 'coverage-lcov.info'
           project-token: ${CODACY_PROJECT_TOKEN}
+
+# Orchestrate our job run sequence
+workflows: # cf.: https://circleci.com/docs/2.0/sample-config/
+  build_and_test:
+    jobs:
+      - build
+      - test
+          requires:
+            - build
 
 # version: 2.1
 
