@@ -8,27 +8,137 @@ variables:
 orbs:
   codecov: codecov/codecov@1.0.2 # need to allow 3rd party orbs in project settings on circleci
   python: circleci/python@0.2.1
+  coverage-reporter: codacy/coverage-reporter@12.1.3
+
 jobs:
+  instantiate:
+    working_directory: ~/CFD2021Projects   # Clone into a directory whose name matches your Package.
+    docker:
+      - image: julia:1.6.0                # image comes from Docker hub
+    steps:
+      - attach_workspace:
+            at: ..
+#       - restore_cache:
+#           name: Restore source code cache
+#           keys:
+#             - source-{{ .Branch }}-{{ .Revision }}
+#             - source-{{ .Branch }}-
+#             - source-
+      - checkout
+#       - run:
+#           name: Git GC
+#           command: git gc
+#       - save_cache:
+#           name: Cache source code
+#           key: source-v1-{{ .Branch }}-{{ .Revision }}
+#           paths:
+#             - ".git"
+            
+      - restore_cache:
+#           name: Restore Julia artifact cache
+#           keys:
+#             - julia-artifacts-{{ arch }}-{{ .Branch }}-{{ checksum "Manifest.toml" }}
+#             - julia-artifacts-{{ arch }}-{{ .Branch }}-
+#             - julia-artifacts-
+          name: Restore Julia cache
+          keys:
+            - julia-cache-{{ arch }}-{{ .Branch }}-{{ checksum "Manifest.toml" }}
+            - julia-cache-{{ arch }}-{{ .Branch }}-
+            - julia-cache-
+      - run:
+          name: Instantiate the package
+          command: julia -e  'using Pkg; Pkg.activate(pwd()); Pkg.update(); Pkg.instantiate();'
+      - save_cache:
+#           name: Save Julia artifacts 
+#           key: julia-artifacts-{{ arch }}-{{ .Branch }}-{{ checksum "Manifest.toml" }}
+#           paths:
+#             - ~/.julia/artifacts
+          name: Save Julia cache 
+          key: julia-cache-{{ arch }}-{{ .Branch }}-{{ checksum "Manifest.toml" }}
+          paths:
+            - ~/.julia
+      - persist_to_workspace:
+            root: ..
+            paths:
+              - ./CFD2021Projects
+              - ./.julia
+
   build:
     working_directory: /root/project/CFD2021Projects   # Clone into a directory whose name matches your Package.
     docker:
       - image: julia:1.6.0                # image comes from Docker hub
+    steps: 
+      - attach_workspace:
+            at: ..
+      - restore_cache:
+          name: Restore Julia cache
+          keys:
+            - julia-cache-{{ arch }}-{{ .Branch }}-{{ checksum "Manifest.toml" }}
+            - julia-cache-{{ arch }}-{{ .Branch }}-
+            - julia-cache-
+      - run:
+          name: Build the package
+          command: julia -e  'using Pkg; Pkg.activate(pwd()); Pkg.build(); Pkg.precompile();'
+      - save_cache:
+          name: Save Julia cache 
+          key: julia-cache-{{ arch }}-{{ .Branch }}-{{ checksum "Manifest.toml" }}
+          paths:
+            - ~/.julia
+      - persist_to_workspace:
+            root: ..
+            paths:
+              - ./CFD2021Projects
+              - ./.julia
+
+  test:
+    working_directory: /root/project/CFD2021Projects   # Clone into a directory whose name matches your Package.
+    docker:
+      - image: julia:1.6.0                # image comes from Docker hub
     steps:
-      - checkout
+      - attach_workspace:
+            at: ..
+            
+      - restore_cache:
+          name: Restore Julia cache
+          keys:
+            - julia-cache-{{ arch }}-{{ .Branch }}-{{ checksum "Manifest.toml" }}
+            - julia-cache-{{ arch }}-{{ .Branch }}-
+            - julia-cache-
       - run:
-          name: Install and Test this package
-          command: julia -e  'using Pkg; Pkg.activate(pwd()); Pkg.update(); Pkg.build(); Pkg.test(; coverage=true);'
-#       - run:
-#           name: Process and uplode code-coverage
-#           command: julia -e 'using Pkg; Pkg.activate(pwd()); using Coverage; Codecov.submit_local(process_folder())'
-#           env:
-#             CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+          name: Test the package
+          command: julia -e  'using Pkg; Pkg.activate(pwd()); Pkg.test(; coverage=true);'
+      - save_cache:
+          name: Save Julia cache 
+          key: julia-cache-{{ arch }}-{{ .Branch }}-{{ checksum "Manifest.toml" }}
+          paths:
+            - ~/.julia
+          
       - run:
-          name: Process code-coverage
+          name: Process code coverage
           command: julia -e 'using Pkg; Pkg.activate(pwd()); using Coverage, Glob; coverage = process_folder(); coverage = append!(coverage, vcat(process_folder.(glob("**/src/"))...)); LCOV.writefile("coverage-lcov.info", coverage)'
       - codecov/upload:
           file: "coverage-lcov.info"
           token: ${CODECOV_TOKEN}
+      - coverage-reporter/send_report:
+          coverage-reports: 'coverage-lcov.info'
+          project-token: ${CODACY_PROJECT_TOKEN}
+      - persist_to_workspace:
+            root: ..
+            paths:
+              - ./CFD2021Projects
+              - ./.julia
+
+# Orchestrate our job run sequence
+workflows: # cf.: https://circleci.com/docs/2.0/sample-config/
+  build_and_test:
+    jobs:
+      - instantiate
+      - build:
+          requires:
+            - instantiate
+      - test:
+          requires:
+            - instantiate
 
 # version: 2.1
 
