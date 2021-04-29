@@ -85,5 +85,5 @@ for geometrical and general setups.
 - [ ] Processing general [NACA airfoils](https://en.wikipedia.org/wiki/NACA_airfoil)
       (formula generation, discretization, splining, etc.)
 - [ ] Port the output to standard
-      [![Gmsh](https://img.shields.io/static/v1?logo=Vercel&logoColor=white&label=&message=Gmsh&color=000000)](http://gmsh.info)
+      [![Gmsh](https://img.shields.io/static/v1?logo=Vercel&logoColor=white&label=&message=Gmsh&color=000000)](https://gmsh.info)
       format.
