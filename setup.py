@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
-Setup script of the project.
+"""Setup script of the project.
 
 Not yet implemented. The following is an example of a python module docstring.
 
