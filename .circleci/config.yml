@@ -46,8 +46,6 @@ jobs:
           key: julia-artifacts-{{ arch }}-{{ .Branch }}-{{ checksum "Manifest.toml" }}
           paths:
             - ~/.julia/artifacts
-      - store_artifacts:
-            path: yarn.lock
       - persist_to_workspace:
             root: ..
             paths:
@@ -74,8 +72,6 @@ jobs:
           key: julia-artifacts-{{ arch }}-{{ .Branch }}-{{ checksum "Manifest.toml" }}
           paths:
             - ~/.julia/artifacts
-      - store_artifacts:
-            path: yarn.lock
       - persist_to_workspace:
             root: ..
             paths:
