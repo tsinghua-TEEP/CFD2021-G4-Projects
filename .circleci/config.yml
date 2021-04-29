@@ -138,7 +138,7 @@ workflows: # cf.: https://circleci.com/docs/2.0/sample-config/
             - instantiate
       - test:
           requires:
-            - build
+            - instantiate
 
 # version: 2.1
 
