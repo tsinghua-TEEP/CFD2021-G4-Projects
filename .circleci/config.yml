@@ -52,7 +52,7 @@ jobs:
             root: ..
             paths:
                 - CFD2021Projects
-                - ~/.julia
+
   build:
     working_directory: /root/project/CFD2021Projects   # Clone into a directory whose name matches your Package.
     docker:
@@ -80,7 +80,6 @@ jobs:
             root: ..
             paths:
                 - CFD2021Projects
-                - ~/.julia
 
   test:
     working_directory: /root/project/CFD2021Projects   # Clone into a directory whose name matches your Package.
