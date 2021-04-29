@@ -35,19 +35,28 @@ jobs:
 #             - ".git"
             
       - restore_cache:
-          name: Restore Julia artifact cache
+#           name: Restore Julia artifact cache
+#           keys:
+#             - julia-artifacts-{{ arch }}-{{ .Branch }}-{{ checksum "Manifest.toml" }}
+#             - julia-artifacts-{{ arch }}-{{ .Branch }}-
+#             - julia-artifacts-
+          name: Restore Julia cache
           keys:
-            - julia-artifacts-{{ arch }}-{{ .Branch }}-{{ checksum "Manifest.toml" }}
-            - julia-artifacts-{{ arch }}-{{ .Branch }}-
-            - julia-artifacts-
+            - julia-cache-{{ arch }}-{{ .Branch }}-{{ checksum "Manifest.toml" }}
+            - julia-cache-{{ arch }}-{{ .Branch }}-
+            - julia-cache-
       - run:
           name: Instantiate the package
           command: julia -e  'using Pkg; Pkg.activate(pwd()); Pkg.update(); Pkg.instantiate();'
       - save_cache:
-          name: Cache Julia artifacts 
-          key: julia-artifacts-{{ arch }}-{{ .Branch }}-{{ checksum "Manifest.toml" }}
+#           name: Save Julia artifacts 
+#           key: julia-artifacts-{{ arch }}-{{ .Branch }}-{{ checksum "Manifest.toml" }}
+#           paths:
+#             - ~/.julia/artifacts
+          name: Save Julia cache 
+          key: julia-cache-{{ arch }}-{{ .Branch }}-{{ checksum "Manifest.toml" }}
           paths:
-            - ~/.julia/artifacts
+            - ~/.julia
       - persist_to_workspace:
             root: ..
             paths:
@@ -62,19 +71,19 @@ jobs:
       - attach_workspace:
             at: ..
       - restore_cache:
-          name: Restore Julia artifact cache
+          name: Restore Julia cache
           keys:
-            - julia-artifacts-{{ arch }}-{{ .Branch }}-{{ checksum "Manifest.toml" }}
-            - julia-artifacts-{{ arch }}-{{ .Branch }}-
-            - julia-artifacts-
+            - julia-cache-{{ arch }}-{{ .Branch }}-{{ checksum "Manifest.toml" }}
+            - julia-cache-{{ arch }}-{{ .Branch }}-
+            - julia-cache-
       - run:
           name: Build the package
           command: julia -e  'using Pkg; Pkg.activate(pwd()); Pkg.build();'
       - save_cache:
-          name: Cache Julia artifacts 
-          key: julia-artifacts-{{ arch }}-{{ .Branch }}-{{ checksum "Manifest.toml" }}
+          name: Save Julia cache 
+          key: julia-cache-{{ arch }}-{{ .Branch }}-{{ checksum "Manifest.toml" }}
           paths:
-            - ~/.julia/artifacts
+            - ~/.julia
       - persist_to_workspace:
             root: ..
             paths:
@@ -90,19 +99,19 @@ jobs:
             at: ..
             
       - restore_cache:
-          name: Restore Julia artifact cache
+          name: Restore Julia cache
           keys:
-            - julia-artifacts-{{ arch }}-{{ .Branch }}-{{ checksum "Manifest.toml" }}
-            - julia-artifacts-{{ arch }}-{{ .Branch }}-
-            - julia-artifacts-
+            - julia-cache-{{ arch }}-{{ .Branch }}-{{ checksum "Manifest.toml" }}
+            - julia-cache-{{ arch }}-{{ .Branch }}-
+            - julia-cache-
       - run:
           name: Test the package
           command: julia -e  'using Pkg; Pkg.activate(pwd()); Pkg.test(; coverage=true);'
       - save_cache:
-          name: Cache Julia artifacts 
-          key: julia-artifacts-{{ arch }}-{{ .Branch }}-{{ checksum "Manifest.toml" }}
+          name: Save Julia cache 
+          key: julia-cache-{{ arch }}-{{ .Branch }}-{{ checksum "Manifest.toml" }}
           paths:
-            - ~/.julia/artifacts
+            - ~/.julia
           
       - run:
           name: Process code coverage
