@@ -8,6 +8,7 @@
 [![License: Apache-2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/tsinghua-TEEP/CFD2021-G4-Projects/blob/main/LICENSE)
 [![wakatime](https://wakatime.com/badge/github/tsinghua-TEEP/CFD2021-G4-Projects.svg)](https://wakatime.com/badge/github/tsinghua-TEEP/CFD2021-G4-Projects)
 [![ColPrac: Contributor's Guide on Collaborative Practices for Community Packages](https://img.shields.io/badge/ColPrac-Contributor's%20Guide-blueviolet)](https://github.com/SciML/ColPrac)
+[![Discussions](https://img.shields.io/badge/GitHub-Discussions-green?logo=github)](https://github.com/tsinghua-TEEP/CFD2021-G4-Projects/discussions)
 <!-- [![Dependabot Status](https://api.dependabot.com/badges/status?host=github&repo=tsinghua-TEEP/CFD2021-G4-Projects)](https://dependabot.com) !-->
 
 This repository dedicates to the team projects
