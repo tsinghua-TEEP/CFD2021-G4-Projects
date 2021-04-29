@@ -12,7 +12,7 @@ orbs:
 
 jobs:
   instantiate:
-    working_directory: /root/project/CFD2021Projects   # Clone into a directory whose name matches your Package.
+    working_directory: ~/CFD2021Projects   # Clone into a directory whose name matches your Package.
     docker:
       - image: julia:1.6.0                # image comes from Docker hub
     steps:
@@ -47,9 +47,10 @@ jobs:
           paths:
             - ~/.julia/artifacts
       - persist_to_workspace:
-            root: ..
+            root: ~
             paths:
-                - CFD2021Projects
+              - ./CFD2021Projects
+              - ./.julia
 
   build:
     working_directory: /root/project/CFD2021Projects   # Clone into a directory whose name matches your Package.
@@ -57,7 +58,7 @@ jobs:
       - image: julia:1.6.0                # image comes from Docker hub
     steps: 
       - attach_workspace:
-            at: ..
+            at: ~
       - restore_cache:
           name: Restore Julia artifact cache
           keys:
@@ -73,9 +74,10 @@ jobs:
           paths:
             - ~/.julia/artifacts
       - persist_to_workspace:
-            root: ..
+            root: ~
             paths:
-                - CFD2021Projects
+              - ./CFD2021Projects
+              - ./.julia
 
   test:
     working_directory: /root/project/CFD2021Projects   # Clone into a directory whose name matches your Package.
@@ -83,7 +85,7 @@ jobs:
       - image: julia:1.6.0                # image comes from Docker hub
     steps:
       - attach_workspace:
-            at: ..
+            at: ~
             
       - restore_cache:
           name: Restore Julia artifact cache
@@ -109,6 +111,11 @@ jobs:
       - coverage-reporter/send_report:
           coverage-reports: 'coverage-lcov.info'
           project-token: ${CODACY_PROJECT_TOKEN}
+      - persist_to_workspace:
+            root: ~
+            paths:
+              - ./CFD2021Projects
+              - ./.julia
 
 # Orchestrate our job run sequence
 workflows: # cf.: https://circleci.com/docs/2.0/sample-config/
