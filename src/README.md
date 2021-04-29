@@ -1,6 +1,6 @@
 # Shared source files
 
-This directory holds shared source code among projects.
+This directory holds shared source code among projects.  
 Content:
 
   - misc-tuils.jl
