@@ -8,6 +8,7 @@ variables:
 orbs:
   codecov: codecov/codecov@1.0.2 # need to allow 3rd party orbs in project settings on circleci
   python: circleci/python@0.2.1
+  coverage-reporter: codacy/coverage-reporter@12.1.3
 jobs:
   build:
     working_directory: /root/project/CFD2021Projects   # Clone into a directory whose name matches your Package.
@@ -29,6 +30,9 @@ jobs:
       - codecov/upload:
           file: "coverage-lcov.info"
           token: ${CODECOV_TOKEN}
+      - coverage-reporter/send_report:
+          coverage-reports: 'coverage-lcov.info'
+          project-token: ${CODACY_PROJECT_TOKEN}
 
 # version: 2.1
 
