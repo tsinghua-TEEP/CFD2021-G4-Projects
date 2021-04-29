@@ -13,7 +13,7 @@
 <!-- [![Dependabot Status](https://api.dependabot.com/badges/status?host=github&repo=tsinghua-TEEP/CFD2021-G4-Projects)](https://dependabot.com) !-->
 
 This repository dedicates to the team projects
-related to the [computational fluid dynamics course](http://reserves.lib.tsinghua.edu.cn/Courses/CourseDetail?courseId=cb3f2412-7ba3-465f-a8b8-c24061b136d9) by Prof. Ren, 2021 spring, at SAS, THU.  
+related to the [computational fluid dynamics course](http://reserves.lib.tsinghua.edu.cn/Courses/CourseDetail?courseId=cb3f2412-7ba3-465f-a8b8-c24061b136d9) by [Prof. Ren](http://www.hy.tsinghua.edu.cn/info/1154/1826.htm), 2021 spring, at SAS, THU.  
 Efforts are contributed by a joined 4-member group.  
 For practice and performance, we attempt to use the
 [![Julia](https://img.shields.io/static/v1?logo=Julia&logoColor=white&label=&message=Julia&color=9558B2)](https://julialang.org)
