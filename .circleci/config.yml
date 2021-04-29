@@ -119,8 +119,11 @@ jobs:
 workflows: # cf.: https://circleci.com/docs/2.0/sample-config/
   build_and_test:
     jobs:
-      - build
-      - test
+      - instantiate
+      - build:
+          requires:
+            - instantiate
+      - test:
           requires:
             - build
 
