@@ -37,13 +37,14 @@
         "**/.JuliaFormatter.toml": true,
         "**/.circleci": true,
         "**/.codecov.yml": true,
-        "**/CMakeLists.txt": true
+        "**/CMakeLists.txt": true,
+        "**/renovate.json": true,
+        "**/.licrc": true
     },
     "explorerExclude.backup": null,
     "jupyter.jupyterServerType": "local",
     "python.pythonPath": "${workspaceFolder}\\.conda\\env\\CFD2021-G4-Projects\\python.exe",
     "git.fetchOnPull": true,
-    "git.enableSmartCommit": true,
     "git.useCommitInputAsStashMessage": true,
     "cSpell.words": [
         "eltype"
