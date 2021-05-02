@@ -41,8 +41,11 @@
     },
     "explorerExclude.backup": null,
     "jupyter.jupyterServerType": "local",
-    "python.pythonPath": "C:\\Users\\Fang Tci\\Documents\\吴昊-华为本研\\CFD2021-G4-Projects\\.conda\\env\\CFD2021-G4-Projects\\python.exe",
+    "python.pythonPath": "${workspaceFolder}\\.conda\\env\\CFD2021-G4-Projects\\python.exe",
     "git.fetchOnPull": true,
     "git.enableSmartCommit": true,
-    "git.useCommitInputAsStashMessage": true
+    "git.useCommitInputAsStashMessage": true,
+    "cSpell.words": [
+        "eltype"
+    ]
 }
