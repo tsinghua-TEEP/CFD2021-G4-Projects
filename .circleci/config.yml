@@ -7,7 +7,7 @@ variables:
 
 orbs:
   codecov: codecov/codecov@1.0.2 # need to allow 3rd party orbs in project settings on circleci
-  python: circleci/python@0.2.1
+  python: circleci/python@1.4.0
   coverage-reporter: codacy/coverage-reporter@12.1.3
 
 jobs:
