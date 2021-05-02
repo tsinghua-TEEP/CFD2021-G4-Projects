@@ -9,7 +9,8 @@
 [![Wakatime timing](https://wakatime.com/badge/github/tsinghua-TEEP/CFD2021-G4-Projects.svg?logo=WakaTime&style=flat)](https://wakatime.com/badge/github/tsinghua-TEEP/CFD2021-G4-Projects)  
 [![ColPrac: Contributor's Guide](https://img.shields.io/badge/ColPrac-Contributor's%20Guide-blueviolet?logo=Julia&logoColor=white&style=flat)](https://github.com/SciML/ColPrac)
 [![GitHub Repository Discussions](https://img.shields.io/badge/GitHub-Discussions-blueviolet?logo=github&style=flat)](https://github.com/tsinghua-TEEP/CFD2021-G4-Projects/discussions)
-[![Zoom meeting](https://img.shields.io/static/v1?logo=LiveChat&logoColor=white&label=meeting&message=Zoom&style=flat&color=2D8CFF)](https://us02web.zoom.us/j/88643726401?pwd=V3BNdTV4TWlvZmZkd2VoSHZ0Y2Q0Zz09)
+[![Zoom meeting](https://img.shields.io/static/v1?label=meeting&message=Zoom&style=flat&color=2D8CFF)](https://us02web.zoom.us/j/88643726401?pwd=V3BNdTV4TWlvZmZkd2VoSHZ0Y2Q0Zz09)
+[![Tencent meeting](https://img.shields.io/static/v1?logo=Gmail&logoColor=white&label=meeting&message=Tencent&style=flat&color=128DFF)](https://meeting.tencent.com/s/8JMCUq9ORnUe)
 <!-- [![Dependabot Status](https://api.dependabot.com/badges/status?host=github&repo=tsinghua-TEEP/CFD2021-G4-Projects)](https://dependabot.com) !-->
 
 This repository dedicates to the team projects
