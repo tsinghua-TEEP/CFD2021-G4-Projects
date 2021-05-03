@@ -18,5 +18,6 @@
 module CFD2021Projects
 include(normpath(joinpath(@__DIR__, "misc-util.jl")))
 include(normpath(joinpath(@__DIR__, "../Project-1/src/transfinite-interpolate.jl")))
-using .transfinite_interpolate
+import .transfinite_interpolate: transfinite_interpolate_2d!, transfinite_interpolate_2d
+export transfinite_interpolate_2d!, transfinite_interpolate_2d
 end # module CFD2021Projects
