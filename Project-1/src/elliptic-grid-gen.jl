@@ -97,6 +97,7 @@ function inverted_poisson_2d_jacobi_iterate!(xs::Matrix{T}, ys::Matrix{T}, ε=1e
     while residue() > ε
         inverted_poisson_2d_jacobi_step!(cache_xs, cache_ys, xs, ys)
         inverted_poisson_2d_jacobi_step!(xs, ys, cache_xs, cache_ys)
+    end
     return xs, ys
 end
 
