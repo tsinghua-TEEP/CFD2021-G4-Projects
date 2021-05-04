@@ -23,11 +23,31 @@ module elliptic_grid_gen
 using LinearAlgebra
 
 """
-Work in progress.
+    inverted_poisson_2d_jacobi_step(xs, ys[, P, Q])
+    inverted_poisson_2d_jacobi_step!(output_xs, output_ys, xs, ys[, P, Q])
+
+Take a Jacobi step for an array-pair represented 2d grid.
+
+TODO: generalize to higher dimensions.
+
+# Arguments
+- `xs::Matrix{<: Number}`: array of `x`-coordinates.
+- `ys::Matrix{<: Number}`: array of `y`-coordinates.
+- `P::Function`: (optional) `ξ` related source term.
+- `Q::Function`: (optional) `η` related source term.
+
+# Output
+- `output_xs::Matrix{<: Number}`: array of `x`-coordinates, at the next step.
+- `output_ys::Matrix{<: Number}`: array of `y`-coordinates, at the next step.
+
+# Examples
+```jldoctest
+```
 """
-function inverted_poisson_2d_jacobi_step(        xs::Matrix{T},        ys::Matrix{T},
-                                          P::Union{Nothing, Function} = nothing     ,
-                                          Q::Union{Nothing, Function} = nothing     ) where {T <: Number}
+function inverted_poisson_2d_jacobi_step(
+    xs::Matrix{T} , ys::Matrix{T} ,
+    P::S = nothing, Q::S = nothing            ) where {T <: Number, S <: Union{Nothing, Function}}
+
     (axes(xs) == axes(ys)) ||
         throw(DimensionMismatch("Dimensions of x ($(axes(xs))) and y ($(axes(ys))) does not match."))
     output_xs = similar(xs)
@@ -35,10 +55,11 @@ function inverted_poisson_2d_jacobi_step(        xs::Matrix{T},        ys::Matri
     inverted_poisson_2d_jacobi_step!(output_xs, output_ys, xs, ys, P, Q)
     return output_xs, output_ys
 end
-function inverted_poisson_2d_jacobi_step!(output_xs::Matrix{T}, output_ys::Matrix{T},
-                                                 xs::Matrix{T},        ys::Matrix{T},
-                                          P::Union{Nothing, Function} = nothing     ,
-                                          Q::Union{Nothing, Function} = nothing     ) where {T <: Number}
+function inverted_poisson_2d_jacobi_step!(
+    output_xs::Matrix{T}, output_ys::Matrix{T},
+           xs::Matrix{T},        ys::Matrix{T},
+    P::S = nothing      , Q::S = nothing      ) where {T <: Number, S <: Union{Nothing, Function}}
+
     (axes(output_xs) == axes(output_ys) == axes(xs) == axes(ys)) ||
         throw(DimensionMismatch("Dimensions of input ($((axes(xs), axes(ys))) and output ($((axes(output_xs), axes(output_ys)))) are not compatible"))
     M = [l-1 for l in size(xs)]
@@ -91,21 +112,44 @@ function inverted_poisson_2d_jacobi_step!(output_xs::Matrix{T}, output_ys::Matri
 end
 
 """
-Work in progress.
+    inverted_poisson_2d_jacobi_iterate(xs, ys[, P, Q])
+    inverted_poisson_2d_jacobi_iterate!(xs, ys[, P, Q[, cache_xs, cache_ys]])
+
+Full Jacobi relaxation of an array-pair represented 2d grid.
+
+TODO: generalize to higher dimensions.
+
+# Arguments
+- `xs::Matrix{<: Number}`: array of `x`-coordinates.
+- `ys::Matrix{<: Number}`: array of `y`-coordinates.
+- `ε::Float=1e-10`: (optional) tolerance of residue.
+- `P::Function`: (optional) `ξ` related source term.
+- `Q::Function`: (optional) `η` related source term.
+- `cache_xs::Matrix{<: Number}`: (optional) buffer array of `x`-coordinates.
+- `cache_ys::Matrix{<: Number}`: (optional) buffer array of `y`-coordinates.
+
+# Output
+- `output_xs::Matrix{<: Number}`: relaxed array of `x`-coordinates.
+- `output_ys::Matrix{<: Number}`: relaxed array of `y`-coordinates.
+
+# Examples
+```jldoctest
+```
 """
-function inverted_poisson_2d_jacobi_iterate( xs::Matrix{T}, ys::Matrix{T}, ε::Float=1e-10 ,
-                                             P::Union{Nothing, Function} = nothing        ,
-                                             Q::Union{Nothing, Function} = nothing        ) where {T <: Number}
+function inverted_poisson_2d_jacobi_iterate(
+    xs::Matrix{T} , ys::Matrix{T} , ε::Float=1e-10,
+    P::S = nothing, Q::S = nothing              ) where {T <: Number, S <: Union{Nothing, Function}}
+
     cache_xs = xs
     cache_ys = ys
     inverted_poisson_2d_jacobi_iterate!(cache_xs, cache_ys, ε, P, Q)
     return cache_xs, cache_ys
 end
-function inverted_poisson_2d_jacobi_iterate!(xs::Matrix{T}, ys::Matrix{T}, ε::Float=1e-10 ,
-                                             P::Union{Nothing, Function} = nothing        ,
-                                             Q::Union{Nothing, Function} = nothing        ,
-                                             cache_xs::Union{Nothing, Matrix{T}} = nothing,
-                                             cache_ys::Union{Nothing, Matrix{T}} = nothing) where {T <: Number}
+function inverted_poisson_2d_jacobi_iterate!(
+    xs::Matrix{T} , ys::Matrix{T} , ε::Float=1e-10,
+    P::S = nothing, Q::S = nothing,
+    cache_xs::R = nothing, cache_ys::R = nothing) where {T <: Number, S <: Union{Nothing, Function}, R <: Union{Nothing, Matrix{T}}}
+
     !(typeof(cache_xs) <: Nothing) || cache_xs = similar(xs)
     !(typeof(cache_ys) <: Nothing) || cache_ys = similar(xs)
     @inline residue() = max(norm(cache_xs - xs), norm(cache_ys - ys))
