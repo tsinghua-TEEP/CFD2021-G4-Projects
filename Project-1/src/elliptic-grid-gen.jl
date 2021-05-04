@@ -46,19 +46,21 @@ TODO: generalize to higher dimensions.
 """
 function inverted_poisson_2d_jacobi_step(
     xs::Matrix{T} , ys::Matrix{T} ,
-    P::S = nothing, Q::S = nothing            ) where {T <: Number, S <: Union{Nothing, Function}}
+    P::S = nothing, Q::S = nothing,
+    boundaray_ortho_factor::Union{Nothing, Float64}=nothing) where {T <: Number, S <: Union{Nothing, Function}}
 
     (axes(xs) == axes(ys)) ||
         throw(DimensionMismatch("Dimensions of x ($(axes(xs))) and y ($(axes(ys))) does not match."))
     output_xs = similar(xs)
     output_ys = similar(ys)
-    inverted_poisson_2d_jacobi_step!(output_xs, output_ys, xs, ys, P, Q)
+    inverted_poisson_2d_jacobi_step!(output_xs, output_ys, xs, ys, P, Q, boundaray_ortho_factor)
     return output_xs, output_ys
 end
 function inverted_poisson_2d_jacobi_step!(
     output_xs::Matrix{T}, output_ys::Matrix{T},
            xs::Matrix{T},        ys::Matrix{T},
-    P::S = nothing      , Q::S = nothing      ) where {T <: Number, S <: Union{Nothing, Function}}
+    P::S = nothing      , Q::S = nothing      ,
+    boundaray_ortho_factor::Union{Nothing, Float64}=nothing) where {T <: Number, S <: Union{Nothing, Function}}
 
     (axes(output_xs) == axes(output_ys) == axes(xs) == axes(ys)) ||
         throw(DimensionMismatch("Dimensions of input ($((axes(xs), axes(ys))) and output ($((axes(output_xs), axes(output_ys)))) are not compatible"))
@@ -88,6 +90,16 @@ function inverted_poisson_2d_jacobi_step!(
         @inline ∂xη(u::CartesianIndex) = M[2]/2 * (x_u(u) - x_d(u))
         @inline ∂yξ(u::CartesianIndex) = M[1]/2 * (y_r(u) - y_l(u))
         @inline ∂yη(u::CartesianIndex) = M[2]/2 * (y_u(u) - y_d(u))
+        doBO = (typeof(boundaray_ortho_factor) <: Nothing)
+        doBO || (bof = boundaray_ortho_factor)
+        @inline ∂xξ_m(u::CartesianIndex) = doBO && u[1] in axes(xs)[1][[begin:begin+1, end-1 : end ]] ?
+                                            bof*(-∂xη(u))/sqrt(∂xη(u)^2+∂yη(u)^2) : ∂xξ(u)
+        @inline ∂xη_m(u::CartesianIndex) = doBO && u[2] in axes(xs)[2][[begin:begin+1, end-1 : end ]] ?
+                                            bof*(-∂xξ(u))/sqrt(∂xξ(u)^2+∂yξ(u)^2) : ∂xη(u)
+        @inline ∂yξ_m(u::CartesianIndex) = doBO && u[1] in axes(ys)[1][[begin:begin+1, end-1 : end ]] ?
+                                            bof*(-∂yη(u))/sqrt(∂xη(u)^2+∂yη(u)^2) : ∂yξ(u)
+        @inline ∂yη_m(u::CartesianIndex) = doBO && u[2] in axes(ys)[2][[begin:begin+1, end-1 : end ]] ?
+                                            bof*(-∂yξ(u))/sqrt(∂xξ(u)^2+∂yξ(u)^2) : ∂yη(u)
     end
     "2-order diffs"; begin
         @inline α(  u::CartesianIndex) =  ∂xη(u)^2      + ∂yη(u)^2
@@ -104,15 +116,21 @@ function inverted_poisson_2d_jacobi_step!(
         @inline sy( u::CartesianIndex) = (typeof(P) <: Nothing ? 0 : α(u)*P(u)*∂yξ(u)) + (typeof(Q) <: Nothing ? 0 : γ(u)*Q(u)*∂yη(u))
     end
     "actual computation"
-    for u in CartesianIndices(xs)[[begin end], :]
+    for u in CartesianIndices(xs)[[begin, end], :]
+        output_xs[u] = xs[u]
+        output_ys[u] = ys[u]; end
+    for u in CartesianIndices(xs)[:, [begin, end]]
         output_xs[u] = xs[u]
         output_ys[u] = ys[u]
     end
-    for u in CartesianIndices(xs)[:, [begin end]]
-        output_xs[u] = xs[u]
-        output_ys[u] = ys[u]
+    for u in CartesianIndices(xs)[[begin+1, end-1], begin+1:end-1]
+        output_xs[u] = (bh(u)*(x_l(u) + x_r(u)) + bv(u)*(x_d(u) + x_u(u)) + cx(u) + sx(u)) / bp(u)
+        output_ys[u] = (bh(u)*(y_l(u) + y_r(u)) + bv(u)*(y_d(u) + y_u(u)) + cy(u) + sy(u)) / bp(u); end
+    for u in CartesianIndices(xs)[begin+1:end-1, [begin+1, end-1]]
+        output_xs[u] = (bh(u)*(x_l(u) + x_r(u)) + bv(u)*(x_d(u) + x_u(u)) + cx(u) + sx(u)) / bp(u)
+        output_ys[u] = (bh(u)*(y_l(u) + y_r(u)) + bv(u)*(y_d(u) + y_u(u)) + cy(u) + sy(u)) / bp(u);
     end
-    Threads.@threads for u in CartesianIndices(xs)[begin+1:end-1, begin+1:end-1] # this is good enough for a fixed dirichlet boundary
+    Threads.@threads for u in CartesianIndices(xs)[begin+2:end-2, begin+2:end-2] # this is good enough for a fixed dirichlet boundary
         output_xs[u] = (bh(u)*(x_l(u) + x_r(u)) + bv(u)*(x_d(u) + x_u(u)) + cx(u) + sx(u)) / bp(u)
         output_ys[u] = (bh(u)*(y_l(u) + y_r(u)) + bv(u)*(y_d(u) + y_u(u)) + cy(u) + sy(u)) / bp(u)
     end
@@ -146,33 +164,32 @@ TODO: generalize to higher dimensions.
 """
 function inverted_poisson_2d_jacobi_iterate(
     xs::Matrix{T} , ys::Matrix{T} , ε::Float64=1e-10, maxiter::Union{Nothing, Int}=nothing,
-    P::S = nothing, Q::S = nothing,
-    normp::Real = 2                             ) where {T <: Number, S <: Union{Nothing, Function}}
+    P::S = nothing, Q::S = nothing, boundaray_ortho_factor::Union{Nothing, Float64}=nothing,
+    normp::Real = 2) where {T <: Number, S <: Union{Nothing, Function}}
 
     cache_xs = xs
     cache_ys = ys
-    inverted_poisson_2d_jacobi_iterate!(cache_xs, cache_ys, ε, maxiter, P, Q, normp)
+    inverted_poisson_2d_jacobi_iterate!(cache_xs, cache_ys, ε, maxiter, P, Q, boundaray_ortho_factor, normp)
     return cache_xs, cache_ys
 end
 function inverted_poisson_2d_jacobi_iterate!(
     xs::Matrix{T} , ys::Matrix{T} , ε::Float64=1e-10, maxiter::Union{Nothing, Int}=nothing,
-    P::S = nothing, Q::S = nothing,
+    P::S = nothing, Q::S = nothing, boundaray_ortho_factor::Union{Nothing, Float64}=nothing,
     cache_xs::R = nothing, cache_ys::R = nothing,
-    normp::Real = 2                             ) where {T <: Number, S <: Union{Nothing, Function}, R <: Union{Nothing, Matrix{T}}}
+    normp::Real = 2) where {T <: Number, S <: Union{Nothing, Function}, R <: Union{Nothing, Matrix{T}}}
 
     !(typeof(cache_xs) <: Nothing) || (cache_xs = similar(xs))
     !(typeof(cache_ys) <: Nothing) || (cache_ys = similar(xs))
     @inline residue() = max(norm(cache_xs - xs, normp), norm(cache_ys - ys, normp))
-    @inline steppair()=(inverted_poisson_2d_jacobi_step!(cache_xs, cache_ys, xs, ys, P, Q);
-                        inverted_poisson_2d_jacobi_step!(xs, ys, cache_xs, cache_ys, P, Q))
+    @inline steppair()=(inverted_poisson_2d_jacobi_step!(cache_xs, cache_ys, xs, ys, P, Q, boundaray_ortho_factor);
+                        inverted_poisson_2d_jacobi_step!(xs, ys, cache_xs, cache_ys, P, Q, boundaray_ortho_factor))
     steppair()
     prog = ProgressThresh(ε, desc="Elliptic relaxation:", showspeed=true)
-    generate_showvalues(iter) = () -> [(:iter,iter)]
+    iter = 0; generate_showvalues(iter) = () -> [(:iter,iter)]
     while residue() > ε
-        ProgressMeter.update!(prog, residue())
-        sleep(0.1)
-        steppair()
-        ProgressMeter.next!(p; showvalues = generate_showvalues(iter))
+        (typeof(maxiter) <: Nothing) || iter < maxiter || break
+        ProgressMeter.update!(prog, residue(); showvalues = generate_showvalues(iter))
+        steppair(); iter+=1
     end
     return xs, ys
 end
@@ -185,6 +202,6 @@ function dirichlet_boundary_conform end
 """
 To be done.
 """
-function nuemann_boundary_conform end
+function neumann_boundary_conform end
 
 end # module elliptic_grid_gen
