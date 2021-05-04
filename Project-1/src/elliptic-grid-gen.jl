@@ -70,8 +70,8 @@ function inverted_poisson_2d_jacobi_step!(
         @inline x_u(u::CartesianIndex) =                               u[2] == axes(xs)[2][ end ] ? zero(eltype(xs)) : xs[u+CartesianIndex( 0, 1)]
         @inline xld(u::CartesianIndex) = u[1] == axes(xs)[1][begin] || u[2] == axes(xs)[2][begin] ? zero(eltype(xs)) : xs[u+CartesianIndex(-1,-1)]
         @inline xrd(u::CartesianIndex) = u[1] == axes(xs)[1][ end ] || u[2] == axes(xs)[2][begin] ? zero(eltype(xs)) : xs[u+CartesianIndex( 1,-1)]
-        @inline xlu(u::CartesianIndex) = u[2] == axes(xs)[1][begin] || u[2] == axes(xs)[2][ end ] ? zero(eltype(xs)) : xs[u+CartesianIndex(-1, 1)]
-        @inline xru(u::CartesianIndex) = u[2] == axes(xs)[1][ end ] || u[2] == axes(xs)[2][ end ] ? zero(eltype(xs)) : xs[u+CartesianIndex( 1, 1)]
+        @inline xlu(u::CartesianIndex) = u[1] == axes(xs)[1][begin] || u[2] == axes(xs)[2][ end ] ? zero(eltype(xs)) : xs[u+CartesianIndex(-1, 1)]
+        @inline xru(u::CartesianIndex) = u[1] == axes(xs)[1][ end ] || u[2] == axes(xs)[2][ end ] ? zero(eltype(xs)) : xs[u+CartesianIndex( 1, 1)]
     end
     "neighboring y's"; begin
         @inline y_l(u::CartesianIndex) = u[1] == axes(ys)[1][begin]                               ? zero(eltype(ys)) : ys[u+CartesianIndex(-1, 0)]
@@ -80,8 +80,8 @@ function inverted_poisson_2d_jacobi_step!(
         @inline y_u(u::CartesianIndex) =                               u[2] == axes(ys)[2][ end ] ? zero(eltype(ys)) : ys[u+CartesianIndex( 0, 1)]
         @inline yld(u::CartesianIndex) = u[1] == axes(ys)[1][begin] || u[2] == axes(ys)[2][begin] ? zero(eltype(ys)) : ys[u+CartesianIndex(-1,-1)]
         @inline yrd(u::CartesianIndex) = u[1] == axes(ys)[1][ end ] || u[2] == axes(ys)[2][begin] ? zero(eltype(ys)) : ys[u+CartesianIndex( 1,-1)]
-        @inline ylu(u::CartesianIndex) = u[2] == axes(ys)[1][begin] || u[2] == axes(ys)[2][ end ] ? zero(eltype(ys)) : ys[u+CartesianIndex(-1, 1)]
-        @inline yru(u::CartesianIndex) = u[2] == axes(ys)[1][ end ] || u[2] == axes(ys)[2][ end ] ? zero(eltype(ys)) : ys[u+CartesianIndex( 1, 1)]
+        @inline ylu(u::CartesianIndex) = u[1] == axes(ys)[1][begin] || u[2] == axes(ys)[2][ end ] ? zero(eltype(ys)) : ys[u+CartesianIndex(-1, 1)]
+        @inline yru(u::CartesianIndex) = u[1] == axes(ys)[1][ end ] || u[2] == axes(ys)[2][ end ] ? zero(eltype(ys)) : ys[u+CartesianIndex( 1, 1)]
     end
     "1-order diffs"; begin
         @inline ∂xξ(u::CartesianIndex) = M[1]/2 * (x_r(u) - x_l(u))
@@ -145,30 +145,34 @@ TODO: generalize to higher dimensions.
 ```
 """
 function inverted_poisson_2d_jacobi_iterate(
-    xs::Matrix{T} , ys::Matrix{T} , ε::Float64=1e-10,
-    P::S = nothing, Q::S = nothing              ) where {T <: Number, S <: Union{Nothing, Function}}
+    xs::Matrix{T} , ys::Matrix{T} , ε::Float64=1e-10, maxiter::Union{Nothing, Int}=nothing,
+    P::S = nothing, Q::S = nothing,
+    normp::Real = 2                             ) where {T <: Number, S <: Union{Nothing, Function}}
 
     cache_xs = xs
     cache_ys = ys
-    inverted_poisson_2d_jacobi_iterate!(cache_xs, cache_ys, ε, P, Q)
+    inverted_poisson_2d_jacobi_iterate!(cache_xs, cache_ys, ε, maxiter, P, Q, normp)
     return cache_xs, cache_ys
 end
 function inverted_poisson_2d_jacobi_iterate!(
-    xs::Matrix{T} , ys::Matrix{T} , ε::Float64=1e-10,
+    xs::Matrix{T} , ys::Matrix{T} , ε::Float64=1e-10, maxiter::Union{Nothing, Int}=nothing,
     P::S = nothing, Q::S = nothing,
-    cache_xs::R = nothing, cache_ys::R = nothing) where {T <: Number, S <: Union{Nothing, Function}, R <: Union{Nothing, Matrix{T}}}
+    cache_xs::R = nothing, cache_ys::R = nothing,
+    normp::Real = 2                             ) where {T <: Number, S <: Union{Nothing, Function}, R <: Union{Nothing, Matrix{T}}}
 
     !(typeof(cache_xs) <: Nothing) || (cache_xs = similar(xs))
     !(typeof(cache_ys) <: Nothing) || (cache_ys = similar(xs))
-    @inline residue() = max(norm(cache_xs - xs), norm(cache_ys - ys))
+    @inline residue() = max(norm(cache_xs - xs, normp), norm(cache_ys - ys, normp))
     @inline steppair()=(inverted_poisson_2d_jacobi_step!(cache_xs, cache_ys, xs, ys, P, Q);
                         inverted_poisson_2d_jacobi_step!(xs, ys, cache_xs, cache_ys, P, Q))
     steppair()
-    prog = ProgressThresh(ε, "Elliptic relaxation:")
+    prog = ProgressThresh(ε, desc="Elliptic relaxation:", showspeed=true)
+    generate_showvalues(iter) = () -> [(:iter,iter)]
     while residue() > ε
         ProgressMeter.update!(prog, residue())
         sleep(0.1)
         steppair()
+        ProgressMeter.next!(p; showvalues = generate_showvalues(iter))
     end
     return xs, ys
 end
