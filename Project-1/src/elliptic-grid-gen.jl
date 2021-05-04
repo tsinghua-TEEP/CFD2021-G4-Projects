@@ -69,18 +69,18 @@ function inverted_poisson_2d_jacobi_step!(output_xs::Matrix{T}, output_ys::Matri
         @inline ∂yη(u::CartesianIndex) = M[2]/2 * (y_u(u) - y_d(u))
     end
     "2-order diffs"; begin
-        @inline α( u::CartesianIndex) =  ∂xη(u)^2      + ∂yη(u)^2
-        @inline β( u::CartesianIndex) =  ∂xξ(u)*∂xη(u) + ∂yξ(u)*∂yη(u)
-        @inline γ( u::CartesianIndex) =  ∂xξ(u)^2      + ∂yξ(u)^2
-        @inline bh(u::CartesianIndex) =  M[1]^2 * α(u)
-        @inline bv(u::CartesianIndex) =  M[2]^2 * γ(u)
-        @inline bp(u::CartesianIndex) = (bh(u) + bv(u)) * 2
-        @inline cx(u::CartesianIndex) = -M[1]*M[2]/2 * β(u) * (xld(u) - xrd(u) - xlu(u) + xru(u))
-        @inline cy(u::CartesianIndex) = -M[1]*M[2]/2 * β(u) * (yld(u) - yrd(u) - ylu(u) + yru(u))
+        @inline α(  u::CartesianIndex) =  ∂xη(u)^2      + ∂yη(u)^2
+        @inline β(  u::CartesianIndex) =  ∂xξ(u)*∂xη(u) + ∂yξ(u)*∂yη(u)
+        @inline γ(  u::CartesianIndex) =  ∂xξ(u)^2      + ∂yξ(u)^2
+        @inline bh( u::CartesianIndex) =  M[1]^2 * α(u)
+        @inline bv( u::CartesianIndex) =  M[2]^2 * γ(u)
+        @inline bp( u::CartesianIndex) = (bh(u) + bv(u)) * 2
+        @inline cx( u::CartesianIndex) = -M[1]*M[2]/2 * β(u) * (xld(u) - xrd(u) - xlu(u) + xru(u))
+        @inline cy( u::CartesianIndex) = -M[1]*M[2]/2 * β(u) * (yld(u) - yrd(u) - ylu(u) + yru(u))
     end
     "source related terms"; begin
-        @inline sx(u::CartesianIndex) = (typeof(P) <: Nothing ? 0 : α(u)*P(u)*∂xξ(u)) + (typeof(Q) <: Nothing ? 0 : γ(u)*Q(u)*∂xη(u))
-        @inline sy(u::CartesianIndex) = (typeof(P) <: Nothing ? 0 : α(u)*P(u)*∂yξ(u)) + (typeof(Q) <: Nothing ? 0 : γ(u)*Q(u)*∂yη(u))
+        @inline sx( u::CartesianIndex) = (typeof(P) <: Nothing ? 0 : α(u)*P(u)*∂xξ(u)) + (typeof(Q) <: Nothing ? 0 : γ(u)*Q(u)*∂xη(u))
+        @inline sy( u::CartesianIndex) = (typeof(P) <: Nothing ? 0 : α(u)*P(u)*∂yξ(u)) + (typeof(Q) <: Nothing ? 0 : γ(u)*Q(u)*∂yη(u))
     end
     "actual computation"
     Threads.@threads for u in CartesianIndices(xs)[begin+1:end-1, begin+1:end-1] # this is good enough for a fixed dirichlet boundary
