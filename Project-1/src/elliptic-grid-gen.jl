@@ -20,7 +20,7 @@
 
 module elliptic_grid_gen
 
-using LinearAlgebra
+using LinearAlgebra, ProgressMeter
 
 """
     inverted_poisson_2d_jacobi_step(xs, ys[, P, Q])
@@ -51,7 +51,7 @@ function inverted_poisson_2d_jacobi_step(
     (axes(xs) == axes(ys)) ||
         throw(DimensionMismatch("Dimensions of x ($(axes(xs))) and y ($(axes(ys))) does not match."))
     output_xs = similar(xs)
-    output_ys = similar(xs)
+    output_ys = similar(ys)
     inverted_poisson_2d_jacobi_step!(output_xs, output_ys, xs, ys, P, Q)
     return output_xs, output_ys
 end
@@ -104,6 +104,14 @@ function inverted_poisson_2d_jacobi_step!(
         @inline sy( u::CartesianIndex) = (typeof(P) <: Nothing ? 0 : α(u)*P(u)*∂yξ(u)) + (typeof(Q) <: Nothing ? 0 : γ(u)*Q(u)*∂yη(u))
     end
     "actual computation"
+    for u in CartesianIndices(xs)[[begin end], :]
+        output_xs[u] = xs[u]
+        output_ys[u] = ys[u]
+    end
+    for u in CartesianIndices(xs)[:, [begin end]]
+        output_xs[u] = xs[u]
+        output_ys[u] = ys[u]
+    end
     Threads.@threads for u in CartesianIndices(xs)[begin+1:end-1, begin+1:end-1] # this is good enough for a fixed dirichlet boundary
         output_xs[u] = (bh(u)*(x_l(u) + x_r(u)) + bv(u)*(x_d(u) + x_u(u)) + cx(u) + sx(u)) / bp(u)
         output_ys[u] = (bh(u)*(y_l(u) + y_r(u)) + bv(u)*(y_d(u) + y_u(u)) + cy(u) + sy(u)) / bp(u)
@@ -122,7 +130,7 @@ TODO: generalize to higher dimensions.
 # Arguments
 - `xs::Matrix{<: Number}`: array of `x`-coordinates.
 - `ys::Matrix{<: Number}`: array of `y`-coordinates.
-- `ε::Float=1e-10`: (optional) tolerance of residue.
+- `ε::Float64=1e-10`: (optional) tolerance of residue.
 - `P::Function`: (optional) `ξ` related source term.
 - `Q::Function`: (optional) `η` related source term.
 - `cache_xs::Matrix{<: Number}`: (optional) buffer array of `x`-coordinates.
@@ -137,7 +145,7 @@ TODO: generalize to higher dimensions.
 ```
 """
 function inverted_poisson_2d_jacobi_iterate(
-    xs::Matrix{T} , ys::Matrix{T} , ε::Float=1e-10,
+    xs::Matrix{T} , ys::Matrix{T} , ε::Float64=1e-10,
     P::S = nothing, Q::S = nothing              ) where {T <: Number, S <: Union{Nothing, Function}}
 
     cache_xs = xs
@@ -146,16 +154,21 @@ function inverted_poisson_2d_jacobi_iterate(
     return cache_xs, cache_ys
 end
 function inverted_poisson_2d_jacobi_iterate!(
-    xs::Matrix{T} , ys::Matrix{T} , ε::Float=1e-10,
+    xs::Matrix{T} , ys::Matrix{T} , ε::Float64=1e-10,
     P::S = nothing, Q::S = nothing,
     cache_xs::R = nothing, cache_ys::R = nothing) where {T <: Number, S <: Union{Nothing, Function}, R <: Union{Nothing, Matrix{T}}}
 
-    !(typeof(cache_xs) <: Nothing) || cache_xs = similar(xs)
-    !(typeof(cache_ys) <: Nothing) || cache_ys = similar(xs)
+    !(typeof(cache_xs) <: Nothing) || (cache_xs = similar(xs))
+    !(typeof(cache_ys) <: Nothing) || (cache_ys = similar(xs))
     @inline residue() = max(norm(cache_xs - xs), norm(cache_ys - ys))
+    @inline steppair()=(inverted_poisson_2d_jacobi_step!(cache_xs, cache_ys, xs, ys, P, Q);
+                        inverted_poisson_2d_jacobi_step!(xs, ys, cache_xs, cache_ys, P, Q))
+    steppair()
+    prog = ProgressThresh(ε, "Elliptic relaxation:")
     while residue() > ε
-        inverted_poisson_2d_jacobi_step!(cache_xs, cache_ys, xs, ys, P, Q)
-        inverted_poisson_2d_jacobi_step!(xs, ys, cache_xs, cache_ys, P, Q)
+        ProgressMeter.update!(prog, residue())
+        sleep(0.1)
+        steppair()
     end
     return xs, ys
 end
