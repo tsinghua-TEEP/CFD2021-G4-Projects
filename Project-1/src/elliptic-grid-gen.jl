@@ -90,16 +90,18 @@ function inverted_poisson_2d_jacobi_step!(
         @inline ∂xη(u::CartesianIndex) = M[2]/2 * (x_u(u) - x_d(u))
         @inline ∂yξ(u::CartesianIndex) = M[1]/2 * (y_r(u) - y_l(u))
         @inline ∂yη(u::CartesianIndex) = M[2]/2 * (y_u(u) - y_d(u))
+        @warn "Currently, boundary orthogonalization is not implemented; boundaray_ortho_factor is silently ignored."  maxlog=1 #=
         doBO = (typeof(boundaray_ortho_factor) <: Nothing)
         doBO || (bof = boundaray_ortho_factor)
-        @inline ∂xξ_m(u::CartesianIndex) = doBO && u[1] in axes(xs)[1][[begin:begin+1, end-1 : end ]] ?
-                                            bof*(-∂xη(u))/sqrt(∂xη(u)^2+∂yη(u)^2) : ∂xξ(u)
-        @inline ∂xη_m(u::CartesianIndex) = doBO && u[2] in axes(xs)[2][[begin:begin+1, end-1 : end ]] ?
-                                            bof*(-∂xξ(u))/sqrt(∂xξ(u)^2+∂yξ(u)^2) : ∂xη(u)
-        @inline ∂yξ_m(u::CartesianIndex) = doBO && u[1] in axes(ys)[1][[begin:begin+1, end-1 : end ]] ?
-                                            bof*(-∂yη(u))/sqrt(∂xη(u)^2+∂yη(u)^2) : ∂yξ(u)
-        @inline ∂yη_m(u::CartesianIndex) = doBO && u[2] in axes(ys)[2][[begin:begin+1, end-1 : end ]] ?
-                                            bof*(-∂yξ(u))/sqrt(∂xξ(u)^2+∂yξ(u)^2) : ∂yη(u)
+        @inline ∂xξ(u::CartesianIndex) = doBO && u[1] in axes(xs)[1][[begin:begin+1, end-1 : end ]] ?
+                                            bof*(-∂xη(u))/sqrt(∂xη(u)^2+∂yη(u)^2) : ∂xξ_b(u)
+        @inline ∂xη(u::CartesianIndex) = doBO && u[2] in axes(xs)[2][[begin:begin+1, end-1 : end ]] ?
+                                            bof*(-∂xξ(u))/sqrt(∂xξ(u)^2+∂yξ(u)^2) : ∂xη_b(u)
+        @inline ∂yξ(u::CartesianIndex) = doBO && u[1] in axes(ys)[1][[begin:begin+1, end-1 : end ]] ?
+                                            bof*(-∂yη(u))/sqrt(∂xη(u)^2+∂yη(u)^2) : ∂yξ_b(u)
+        @inline ∂yη(u::CartesianIndex) = doBO && u[2] in axes(ys)[2][[begin:begin+1, end-1 : end ]] ?
+                                            bof*(-∂yξ(u))/sqrt(∂xξ(u)^2+∂yξ(u)^2) : ∂yη_b(u)
+        =#
     end
     "2-order diffs"; begin
         @inline α(  u::CartesianIndex) =  ∂xη(u)^2      + ∂yη(u)^2
@@ -112,8 +114,10 @@ function inverted_poisson_2d_jacobi_step!(
         @inline cy( u::CartesianIndex) = -M[1]*M[2]/2 * β(u) * (yld(u) - yrd(u) - ylu(u) + yru(u))
     end
     "source related terms"; begin
-        @inline sx( u::CartesianIndex) = (typeof(P) <: Nothing ? 0 : α(u)*P(u)*∂xξ(u)) + (typeof(Q) <: Nothing ? 0 : γ(u)*Q(u)*∂xη(u))
-        @inline sy( u::CartesianIndex) = (typeof(P) <: Nothing ? 0 : α(u)*P(u)*∂yξ(u)) + (typeof(Q) <: Nothing ? 0 : γ(u)*Q(u)*∂yη(u))
+        @inline sx( u::CartesianIndex) = (typeof(P) <: Nothing ? 0 : α(u)*P(xs[u], ys[u])*∂xξ(u)) +
+                                         (typeof(Q) <: Nothing ? 0 : γ(u)*Q(xs[u], ys[u])*∂xη(u))
+        @inline sy( u::CartesianIndex) = (typeof(P) <: Nothing ? 0 : α(u)*P(xs[u], ys[u])*∂yξ(u)) +
+                                         (typeof(Q) <: Nothing ? 0 : γ(u)*Q(xs[u], ys[u])*∂yη(u))
     end
     "actual computation"
     for u in CartesianIndices(xs)[[begin, end], :]
@@ -138,8 +142,8 @@ function inverted_poisson_2d_jacobi_step!(
 end
 
 """
-    inverted_poisson_2d_jacobi_iterate(xs, ys[, P, Q])
-    inverted_poisson_2d_jacobi_iterate!(xs, ys[, P, Q[, cache_xs, cache_ys]])
+    inverted_poisson_2d_jacobi_iterate(xs, ys, ε[, P, Q[, boundaray_ortho_factor]])
+    inverted_poisson_2d_jacobi_iterate!(xs, ys, ε[, P, Q[, boundaray_ortho_factor[, cache_xs, cache_ys[, normp=2]]]])
 
 Full Jacobi relaxation of an array-pair represented 2d grid.
 
@@ -151,8 +155,10 @@ TODO: generalize to higher dimensions.
 - `ε::Float64=1e-10`: (optional) tolerance of residue.
 - `P::Function`: (optional) `ξ` related source term.
 - `Q::Function`: (optional) `η` related source term.
+- `boundaray_ortho_factor::Float64`: (optional) controls grid density at boundaries.
 - `cache_xs::Matrix{<: Number}`: (optional) buffer array of `x`-coordinates.
 - `cache_ys::Matrix{<: Number}`: (optional) buffer array of `y`-coordinates.
+- `normp::Real=2`: use `Lₚ` norm for computing residue.
 
 # Output
 - `output_xs::Matrix{<: Number}`: relaxed array of `x`-coordinates.
