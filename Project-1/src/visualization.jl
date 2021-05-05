@@ -53,7 +53,7 @@ end
 
 myblue = RGB(0.368417, 0.506779, 0.709798) # <==> 94, 129, 181 (the default style in Wolfram Mathematica)
 
-function grid_display(
+function grid_plot(
     xs::Matrix{T} , ys::Matrix{T};
     xlims=(-5, 5), ylims=(-5, 5), aspect_ratio=:equal, color=myblue, title=nothing, mirror::Bool=false) where {T <: Number}
 
@@ -64,7 +64,7 @@ function grid_display(
     return p
 end
 
-function grid_display!(plot_ref,
+function grid_plot!(plot_ref,
     xs::Matrix{T} , ys::Matrix{T};
     xlims=(-5, 5), ylims=(-5, 5), aspect_ratio=:equal, color=myblue, title=nothing, mirror::Bool=false) where {T <: Number}
 
@@ -82,6 +82,5 @@ function grid_display!(plot_ref,
     plot!(p,        yt0012   , 0, 1; label=nothing, color=:black)
     plot!(p, (ξ)-> -yt0012(ξ), 0, 1; label=nothing, color=:black)
     title!(p, title)
-    display(p)
     return p
 end
