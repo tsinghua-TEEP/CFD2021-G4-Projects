@@ -49,8 +49,7 @@ TODO: generalize to higher dimensions.
 
 # Examples
 ```jldoctest
-julia> interp_func = transfinite_interpolate_2d( (x->2x, y->3y), (x->4x+3, y->2+5y) )
-(::var"#interpolating_function#1"{Tuple{var"#2#6", var"#3#7"}, Tuple{var"#4#8", var"#5#9"}}) (generic function with 1 method)
+julia> interp_func = transfinite_interpolate_2d( (x->2x, y->3y), (x->4x+3, y->2+5y) );
 
 julia> interp_func((0.5,0.5))
 3.0
@@ -91,7 +90,7 @@ TODO: generalize to higher dimensions.
 # Arguments
 - `v_lo::Tuple{Vector{<: Real}, Vector{<: Real}}`: a pair of vectors.
 - `v_hi::Tuple{Vector{<: Real}, Vector{<: Real}}`: a pair of vectors.
-- `v_cr::SMatrix{2, 2, <: Real} = nothing`: (optional) values to take at the corners;
+- `v_cr::SMatrix{2, 2, <: Real}`: (optional) values to take at the corners;
     use average of edge values if not provided.
     Still, in practical use you should make sure the ends of the edges meet.
 

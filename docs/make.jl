@@ -1,5 +1,4 @@
 # Copyright 2021 Gravifer
-# Copyright 2021 Gravifer
 # 
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,11 +12,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Entry-point file of the project.
-# can be used for top-tier tests.
-module CFD2021Projects
-include(normpath(joinpath(@__DIR__, "misc-util.jl")))
-include(normpath(joinpath(@__DIR__, "../Project-1/src/transfinite-interpolate.jl")))
-import .transfinite_interpolate: transfinite_interpolate_2d!, transfinite_interpolate_2d
-export transfinite_interpolate_2d!, transfinite_interpolate_2d
-end # module CFD2021Projects
+using Pkg
+Pkg.activate(normpath(joinpath(@__DIR__, "..")))
+using Documenter
+using CFD2021Projects
+doctest__setup__ = quote
+    include(normpath(joinpath(@__DIR__, "../src/misc-util.jl")))
+    include(normpath(joinpath(@__DIR__, "../Project-1/src/transfinite-interpolate.jl")))
+    import .transfinite_interpolate: transfinite_interpolate_2d!, transfinite_interpolate_2d
+end
+eval(doctest__setup__)
+
+DocMeta.setdocmeta!(CFD2021Projects, :DocTestSetup, doctest__setup__; recursive=true)
+
+makedocs(sitename = "CFD2021Projects",
+         modules  = [CFD2021Projects])

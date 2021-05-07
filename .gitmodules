@@ -7,3 +7,9 @@
 [submodule "submodules/submodules/SchwarzChristoffel.jl"]
 	path = submodules/submodules/SchwarzChristoffel.jl
 	url = https://github.com/jdeldre/SchwarzChristoffel.jl.git
+[submodule "submodules/gmsh"]
+	path = submodules/gmsh
+	url = https://github.com/live-clones/gmsh.git
+[submodule "submodules/SchwarzChristoffel.jl"]
+	path = submodules/SchwarzChristoffel.jl
+	url = https://github.com/jdeldre/SchwarzChristoffel.jl.git
