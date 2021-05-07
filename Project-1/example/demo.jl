@@ -15,11 +15,8 @@
 using Pkg
 Pkg.activate(normpath(joinpath(@__DIR__, "../..")))
 # using Revise
-using BenchmarkTools
-using Plots
-using OffsetArrays
-
-myblue = RGB(0.368417, 0.506779, 0.709798) # <==> 94, 129, 181 (the default style in Wolfram Mathematica)
+using BenchmarkTools, ProgressMeter
+using Plots, OffsetArrays, LinearAlgebra
 
 """
     yt0012(ξ)
@@ -58,7 +55,7 @@ Base.@pure function yt0012(ξ::T where {T<:Real})
         end)
 end
 
-const Mx, My = 100+1, 20+1
+const Mx, My = 100+1, 100+1
 
 include(normpath(joinpath(@__DIR__, "../../src/misc-util.jl")))
 using .__CFD2021__misc_util__: tuplejoin
@@ -70,6 +67,8 @@ using .__CFD2021__misc_util__: tuplejoin
   julia> @btime tuplejoin(temp_t...)
 ```
 """
+
+include(normpath(joinpath(@__DIR__, "../src/visualization.jl")))
 
 include(normpath(joinpath(@__DIR__, "../src/transfinite-interpolate.jl")))
 import .transfinite_interpolate: transfinite_interpolate_2d!, transfinite_interpolate_2d
@@ -121,15 +120,20 @@ y_hi = (5sinpi.(LinRange(1, 0, Mx)), [LinRange(0, 0, My)...]);
 ```
 """
 
-p = plot(; xlims=(-5, 5), ylims=(-5, 5), aspect_ratio=:equal)
-# p = plot(xlims = (-.6, .6), ylims = (0, .5), aspect_ratio = :equal)
 interpolated_x = Array{Float64}(undef, (length(v) for v in x_lo)...);
 interpolated_y = Array{Float64}(undef, (length(v) for v in y_lo)...);
-@btime transfinite_interpolate_2d!(interpolated_x, x_lo, x_hi)
-@btime transfinite_interpolate_2d!(interpolated_y, y_lo, y_hi)
-for u in axes(interpolated_x)[begin]  plot!(p,interpolated_x[u,:], interpolated_y[u,:], label = nothing, color = myblue); end
-for u in axes(interpolated_x)[ end ]  plot!(p,interpolated_x[:,u], interpolated_y[:,u], label = nothing, color = myblue); end
-# for u in axes(interpolated_x)[begin]  plot!(p,interpolated_x[u,:],-interpolated_y[u,:], label = nothing, color = myblue); end
-# for u in axes(interpolated_x)[ end ]  plot!(p,interpolated_x[:,u],-interpolated_y[:,u], label = nothing, color = myblue); end
-plot!(p, yt0012, 0, 1; label=nothing, color=:red)
-display(p) # savefig(normpath(joinpath(@__DIR__, "img/tf-hO.svg")))
+#= @btime =# transfinite_interpolate_2d!(interpolated_x, x_lo, x_hi)
+#= @btime =# transfinite_interpolate_2d!(interpolated_y, y_lo, y_hi)
+p = plot(; xlims=(-5,5), ylims=(-5,5), aspect_ratio=:equal)
+# p = grid_plot!(p, interpolated_x, interpolated_y; title="tf", mirror=true, xlims=(-5, 5), ylims=(-5, 5), aspect_ratio=:equal)
+# savefig(normpath(joinpath(@__DIR__, "img/tf-hO.png")))
+
+include(normpath(joinpath(@__DIR__, "../src/elliptic-grid-gen.jl")))
+import .elliptic_grid_gen: inverted_poisson_2d_jacobi_step   , inverted_poisson_2d_jacobi_step!   ,
+                           inverted_poisson_2d_jacobi_iterate, inverted_poisson_2d_jacobi_iterate!
+P = Q = ((x, y)->(norm([x, y]-[-3., 3.])) < 1. ? 20. : 0. )
+inverted_poisson_2d_jacobi_iterate!(interpolated_x, interpolated_y, 1e-2, nothing, P, Q, 2.)
+p = plot(; xlims=(-5,5), ylims=(-5,5), aspect_ratio=:equal)
+p = grid_plot!(p, interpolated_x, interpolated_y; title="el", mirror=true, xlims=(-5, 5), ylims=(-5, 5), aspect_ratio=:equal)
+display(p)
+# savefig(normpath(joinpath(@__DIR__, "img/el-hO.png")))

@@ -90,7 +90,7 @@ TODO: generalize to higher dimensions.
 # Arguments
 - `v_lo::Tuple{Vector{<: Real}, Vector{<: Real}}`: a pair of vectors.
 - `v_hi::Tuple{Vector{<: Real}, Vector{<: Real}}`: a pair of vectors.
-- `v_cr::SMatrix{2, 2, <: Real} = nothing`: (optional) values to take at the corners;
+- `v_cr::SMatrix{2, 2, <: Real}`: (optional) values to take at the corners;
     use average of edge values if not provided.
     Still, in practical use you should make sure the ends of the edges meet.
 

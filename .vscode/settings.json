@@ -47,6 +47,11 @@
     "git.fetchOnPull": true,
     "git.useCommitInputAsStashMessage": true,
     "cSpell.words": [
-        "eltype"
+        "eltype",
+        "myblue",
+        "normp",
+        "println",
+        "xlims",
+        "ylims"
     ]
 }
