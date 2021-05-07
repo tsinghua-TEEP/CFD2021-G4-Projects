@@ -107,6 +107,7 @@ function inverted_poisson_2d_jacobi_step!(
         @inline α(  u::CartesianIndex) =  ∂xη(u)^2      + ∂yη(u)^2
         @inline β(  u::CartesianIndex) =  ∂xξ(u)*∂xη(u) + ∂yξ(u)*∂yη(u)
         @inline γ(  u::CartesianIndex) =  ∂xξ(u)^2      + ∂yξ(u)^2
+        @inline J(  u::CartesianIndex) =  ∂xξ(u)*∂yη(u) - ∂xη(u)*∂yξ(u)
         @inline bh( u::CartesianIndex) =  M[1]^2 * α(u)
         @inline bv( u::CartesianIndex) =  M[2]^2 * γ(u)
         @inline bp( u::CartesianIndex) = (bh(u) + bv(u)) * 2
@@ -114,10 +115,15 @@ function inverted_poisson_2d_jacobi_step!(
         @inline cy( u::CartesianIndex) = -M[1]*M[2]/2 * β(u) * (yld(u) - yrd(u) - ylu(u) + yru(u))
     end
     "source related terms"; begin
-        @inline sx( u::CartesianIndex) = (typeof(P) <: Nothing ? 0 : α(u)*P(xs[u], ys[u])*∂xξ(u)) +
-                                         (typeof(Q) <: Nothing ? 0 : γ(u)*Q(xs[u], ys[u])*∂xη(u))
-        @inline sy( u::CartesianIndex) = (typeof(P) <: Nothing ? 0 : α(u)*P(xs[u], ys[u])*∂yξ(u)) +
-                                         (typeof(Q) <: Nothing ? 0 : γ(u)*Q(xs[u], ys[u])*∂yη(u))
+        PfO
+        @inline PwO(u::CartesianIndex) =  doBO && u[1] in axes(xs)[1][[begin:begin+1, end-1 : end ]] ?
+                                            P(xs[u], ys[u]) + PfO(xs[u], ys[u]) # boundary?ortho+user:user
+        @inline QwO(u::CartesianIndex) =  doBO && u[1] in axes(xs)[1][[begin:begin+1, end-1 : end ]] ?
+                                            Q(xs[u], ys[u]) + QfO(xs[u], ys[u]) # boundary?ortho+user:user
+        @inline sx( u::CartesianIndex) = (typeof(P) <: Nothing ? 0 : α(u)*PwO(xs[u], ys[u])*∂xξ(u)) +
+                                         (typeof(Q) <: Nothing ? 0 : γ(u)*QwO(xs[u], ys[u])*∂xη(u))
+        @inline sy( u::CartesianIndex) = (typeof(P) <: Nothing ? 0 : α(u)*PwO(xs[u], ys[u])*∂yξ(u)) +
+                                         (typeof(Q) <: Nothing ? 0 : γ(u)*QwO(xs[u], ys[u])*∂yη(u))
     end
     "actual computation"
     for u in CartesianIndices(xs)[[begin, end], :]
