@@ -47,20 +47,20 @@ TODO: generalize to higher dimensions.
 function inverted_poisson_2d_jacobi_step(
     xs::Matrix{T} , ys::Matrix{T} ,
     P::S = nothing, Q::S = nothing,
-    boundaray_ortho_factor::Union{Nothing, Float64}=nothing) where {T <: Number, S <: Union{Nothing, Function}}
+    boundary_ortho_factor::Union{Nothing, Float64}=nothing) where {T <: Number, S <: Union{Nothing, Function}}
 
     (axes(xs) == axes(ys)) ||
         throw(DimensionMismatch("Dimensions of x ($(axes(xs))) and y ($(axes(ys))) does not match."))
     output_xs = similar(xs)
     output_ys = similar(ys)
-    inverted_poisson_2d_jacobi_step!(output_xs, output_ys, xs, ys, P, Q, boundaray_ortho_factor)
+    inverted_poisson_2d_jacobi_step!(output_xs, output_ys, xs, ys, P, Q, boundary_ortho_factor)
     return output_xs, output_ys
 end
 function inverted_poisson_2d_jacobi_step!(
     output_xs::Matrix{T}, output_ys::Matrix{T},
            xs::Matrix{T},        ys::Matrix{T},
     P::S = nothing      , Q::S = nothing      ,
-    boundaray_ortho_factor::Union{Nothing, Float64}=nothing) where {T <: Number, S <: Union{Nothing, Function}}
+    boundary_ortho_factor::Union{Nothing, Float64}=nothing) where {T <: Number, S <: Union{Nothing, Function}}
 
     (axes(output_xs) == axes(output_ys) == axes(xs) == axes(ys)) ||
         throw(DimensionMismatch("Dimensions of input ($((axes(xs), axes(ys))) and output ($((axes(output_xs), axes(output_ys)))) are not compatible"))
@@ -90,9 +90,9 @@ function inverted_poisson_2d_jacobi_step!(
         @inline ∂xη(u::CartesianIndex) = M[2]/2 * (x_u(u) - x_d(u))
         @inline ∂yξ(u::CartesianIndex) = M[1]/2 * (y_r(u) - y_l(u))
         @inline ∂yη(u::CartesianIndex) = M[2]/2 * (y_u(u) - y_d(u))
-        @warn "Currently, boundary orthogonalization is not implemented; boundaray_ortho_factor is silently ignored."  maxlog=1 #=
-        doBO = (typeof(boundaray_ortho_factor) <: Nothing)
-        doBO || (bof = boundaray_ortho_factor)
+        @warn "Currently, boundary orthogonalization is not implemented; boundary_ortho_factor is silently ignored."  maxlog=1
+        doBO = (typeof(boundary_ortho_factor) <: Nothing)
+        doBO || (bof = boundary_ortho_factor) #=
         @inline ∂xξ(u::CartesianIndex) = doBO && u[1] in axes(xs)[1][[begin:begin+1, end-1 : end ]] ?
                                             bof*(-∂xη(u))/sqrt(∂xη(u)^2+∂yη(u)^2) : ∂xξ_b(u)
         @inline ∂xη(u::CartesianIndex) = doBO && u[2] in axes(xs)[2][[begin:begin+1, end-1 : end ]] ?
@@ -115,15 +115,16 @@ function inverted_poisson_2d_jacobi_step!(
         @inline cy( u::CartesianIndex) = -M[1]*M[2]/2 * β(u) * (yld(u) - yrd(u) - ylu(u) + yru(u))
     end
     "source related terms"; begin
-        PfO
+        @inline PfO(u::CartesianIndex) = 0
+        @inline QfO(u::CartesianIndex) = 0
         @inline PwO(u::CartesianIndex) =  doBO && u[1] in axes(xs)[1][[begin:begin+1, end-1 : end ]] ?
-                                            P(xs[u], ys[u]) + PfO(xs[u], ys[u]) # boundary?ortho+user:user
+                                            P(xs[u], ys[u]) + PfO(xs[u], ys[u]) : P(xs[u], ys[u]) # boundary?ortho+user:user
         @inline QwO(u::CartesianIndex) =  doBO && u[1] in axes(xs)[1][[begin:begin+1, end-1 : end ]] ?
-                                            Q(xs[u], ys[u]) + QfO(xs[u], ys[u]) # boundary?ortho+user:user
-        @inline sx( u::CartesianIndex) = (typeof(P) <: Nothing ? 0 : α(u)*PwO(xs[u], ys[u])*∂xξ(u)) +
-                                         (typeof(Q) <: Nothing ? 0 : γ(u)*QwO(xs[u], ys[u])*∂xη(u))
-        @inline sy( u::CartesianIndex) = (typeof(P) <: Nothing ? 0 : α(u)*PwO(xs[u], ys[u])*∂yξ(u)) +
-                                         (typeof(Q) <: Nothing ? 0 : γ(u)*QwO(xs[u], ys[u])*∂yη(u))
+                                            Q(xs[u], ys[u]) + QfO(xs[u], ys[u]) : Q(xs[u], ys[u]) # boundary?ortho+user:user
+        @inline sx( u::CartesianIndex) = (typeof(P) <: Nothing ? 0 : α(u)*PwO(u)*∂xξ(u)) +
+                                         (typeof(Q) <: Nothing ? 0 : γ(u)*QwO(u)*∂xη(u))
+        @inline sy( u::CartesianIndex) = (typeof(P) <: Nothing ? 0 : α(u)*PwO(u)*∂yξ(u)) +
+                                         (typeof(Q) <: Nothing ? 0 : γ(u)*QwO(u)*∂yη(u))
     end
     "actual computation"
     for u in CartesianIndices(xs)[[begin, end], :]
@@ -148,8 +149,8 @@ function inverted_poisson_2d_jacobi_step!(
 end
 
 """
-    inverted_poisson_2d_jacobi_iterate(xs, ys, ε[, P, Q[, boundaray_ortho_factor]])
-    inverted_poisson_2d_jacobi_iterate!(xs, ys, ε[, P, Q[, boundaray_ortho_factor[, cache_xs, cache_ys[, normp=2]]]])
+    inverted_poisson_2d_jacobi_iterate(xs, ys, ε[, P, Q[, boundary_ortho_factor]])
+    inverted_poisson_2d_jacobi_iterate!(xs, ys, ε[, P, Q[, boundary_ortho_factor[, cache_xs, cache_ys[, normp=2]]]])
 
 Full Jacobi relaxation of an array-pair represented 2d grid.
 
@@ -161,7 +162,7 @@ TODO: generalize to higher dimensions.
 - `ε::Float64=1e-10`: (optional) tolerance of residue.
 - `P::Function`: (optional) `ξ` related source term.
 - `Q::Function`: (optional) `η` related source term.
-- `boundaray_ortho_factor::Float64`: (optional) controls grid density at boundaries.
+- `boundary_ortho_factor::Float64`: (optional) controls grid density at boundaries.
 - `cache_xs::Matrix{<: Number}`: (optional) buffer array of `x`-coordinates.
 - `cache_ys::Matrix{<: Number}`: (optional) buffer array of `y`-coordinates.
 - `normp::Real=2`: use `Lₚ` norm for computing residue.
@@ -176,25 +177,25 @@ TODO: generalize to higher dimensions.
 """
 function inverted_poisson_2d_jacobi_iterate(
     xs::Matrix{T} , ys::Matrix{T} , ε::Float64=1e-10, maxiter::Union{Nothing, Int}=nothing,
-    P::S = nothing, Q::S = nothing, boundaray_ortho_factor::Union{Nothing, Float64}=nothing,
+    P::S = nothing, Q::S = nothing, boundary_ortho_factor::Union{Nothing, Float64}=nothing,
     normp::Real = 2) where {T <: Number, S <: Union{Nothing, Function}}
 
     cache_xs = xs
     cache_ys = ys
-    inverted_poisson_2d_jacobi_iterate!(cache_xs, cache_ys, ε, maxiter, P, Q, boundaray_ortho_factor, normp)
+    inverted_poisson_2d_jacobi_iterate!(cache_xs, cache_ys, ε, maxiter, P, Q, boundary_ortho_factor, normp)
     return cache_xs, cache_ys
 end
 function inverted_poisson_2d_jacobi_iterate!(
     xs::Matrix{T} , ys::Matrix{T} , ε::Float64=1e-10, maxiter::Union{Nothing, Int}=nothing,
-    P::S = nothing, Q::S = nothing, boundaray_ortho_factor::Union{Nothing, Float64}=nothing,
+    P::S = nothing, Q::S = nothing, boundary_ortho_factor::Union{Nothing, Float64}=nothing,
     cache_xs::R = nothing, cache_ys::R = nothing,
     normp::Real = 2) where {T <: Number, S <: Union{Nothing, Function}, R <: Union{Nothing, Matrix{T}}}
 
     !(typeof(cache_xs) <: Nothing) || (cache_xs = similar(xs))
     !(typeof(cache_ys) <: Nothing) || (cache_ys = similar(xs))
     @inline residue() = max(norm(cache_xs - xs, normp), norm(cache_ys - ys, normp))
-    @inline steppair()=(inverted_poisson_2d_jacobi_step!(cache_xs, cache_ys, xs, ys, P, Q, boundaray_ortho_factor);
-                        inverted_poisson_2d_jacobi_step!(xs, ys, cache_xs, cache_ys, P, Q, boundaray_ortho_factor))
+    @inline steppair()=(inverted_poisson_2d_jacobi_step!(cache_xs, cache_ys, xs, ys, P, Q, boundary_ortho_factor);
+                        inverted_poisson_2d_jacobi_step!(xs, ys, cache_xs, cache_ys, P, Q, boundary_ortho_factor))
     steppair()
     prog = ProgressThresh(ε, desc="Elliptic relaxation:", showspeed=true)
     iter = 0; generate_showvalues(iter) = () -> [(:iter,iter)]
