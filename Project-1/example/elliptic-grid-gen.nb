@@ -2,6 +2,247 @@
 
 (* Beginning of Notebook Content *)
 Notebook[{
+
+Cell[CellGroupData[{
+Cell["Deduction", "Chapter"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"$PrePrint", "=",
+   RowBox[{
+    RowBox[{"ReplaceAll", "[",
+     RowBox[{"#", ",",
+      RowBox[{"{", "\[IndentingNewLine]",
+       RowBox[{
+        RowBox[{
+         RowBox[{"Evaluate", "@",
+          RowBox[{"Det", "[", "matJ", "]"}]}], "\[Rule]", "J"}], ",",
+        "\[IndentingNewLine]",
+        RowBox[{
+         RowBox[{
+          SuperscriptBox["x",
+           TagBox[
+            RowBox[{"(",
+             RowBox[{"a_", ",", "b_"}], ")"}],
+            Derivative],
+           MultilineFunction->None], "[",
+          RowBox[{"\[Xi]", ",", "\[Eta]"}], "]"}], "\[RuleDelayed]",
+         SubscriptBox["x",
+          RowBox[{"ToExpression", "[",
+           RowBox[{"StringJoin", "[",
+            RowBox[{
+             RowBox[{"Table", "[",
+              RowBox[{"\"\<\[Xi]\>\"", ",", "a"}], "]"}], ",",
+             RowBox[{"Table", "[",
+              RowBox[{"\"\<\[Eta]\>\"", ",", "b"}], "]"}]}], "]"}], "]"}]]}],
+        ",", "\[IndentingNewLine]",
+        RowBox[{
+         RowBox[{
+          SuperscriptBox["y",
+           TagBox[
+            RowBox[{"(",
+             RowBox[{"a_", ",", "b_"}], ")"}],
+            Derivative],
+           MultilineFunction->None], "[",
+          RowBox[{"\[Xi]", ",", "\[Eta]"}], "]"}], "\[RuleDelayed]",
+         SubscriptBox["y",
+          RowBox[{"ToExpression", "[",
+           RowBox[{"StringJoin", "[",
+            RowBox[{
+             RowBox[{"Table", "[",
+              RowBox[{"\"\<\[Xi]\>\"", ",", "a"}], "]"}], ",",
+             RowBox[{"Table", "[",
+              RowBox[{"\"\<\[Eta]\>\"", ",", "b"}], "]"}]}], "]"}], "]"}]]}],
+        ",", "\[IndentingNewLine]",
+        RowBox[{
+         RowBox[{
+          SuperscriptBox["\[Xi]",
+           TagBox[
+            RowBox[{"(",
+             RowBox[{"a_", ",", "b_"}], ")"}],
+            Derivative],
+           MultilineFunction->None], "[",
+          RowBox[{"x", ",", "y"}], "]"}], "\[RuleDelayed]",
+         SubscriptBox["\[Xi]",
+          RowBox[{"ToExpression", "[",
+           RowBox[{"StringJoin", "[",
+            RowBox[{
+             RowBox[{"Table", "[",
+              RowBox[{"\"\<x\>\"", ",", "a"}], "]"}], ",",
+             RowBox[{"Table", "[",
+              RowBox[{"\"\<y\>\"", ",", "b"}], "]"}]}], "]"}], "]"}]]}], ",",
+        "\[IndentingNewLine]",
+        RowBox[{
+         RowBox[{
+          SuperscriptBox["\[Eta]",
+           TagBox[
+            RowBox[{"(",
+             RowBox[{"a_", ",", "b_"}], ")"}],
+            Derivative],
+           MultilineFunction->None], "[",
+          RowBox[{"x", ",", "y"}], "]"}], "\[RuleDelayed]",
+         SubscriptBox["\[Eta]",
+          RowBox[{"ToExpression", "[",
+           RowBox[{"StringJoin", "[",
+            RowBox[{
+             RowBox[{"Table", "[",
+              RowBox[{"\"\<x\>\"", ",", "a"}], "]"}], ",",
+             RowBox[{"Table", "[",
+              RowBox[{"\"\<y\>\"", ",", "b"}], "]"}]}], "]"}], "]"}]]}], ",",
+        "\[IndentingNewLine]",
+        RowBox[{
+         RowBox[{"x", "[",
+          RowBox[{"\[Xi]", ",", "\[Eta]"}], "]"}], "\[Rule]", "x"}], ",",
+        RowBox[{
+         RowBox[{"y", "[",
+          RowBox[{"\[Xi]", ",", "\[Eta]"}], "]"}], "\[Rule]", "y"}], ",",
+        RowBox[{
+         RowBox[{"\[Xi]", "[",
+          RowBox[{"x", ",", "y"}], "]"}], "\[Rule]", "\[Xi]"}], ",",
+        RowBox[{
+         RowBox[{"\[Eta]", "[",
+          RowBox[{"x", ",", "y"}], "]"}], "\[Rule]", "\[Eta]"}]}], "}"}]}],
+     "]"}], "&"}]}], ";"}], "\[IndentingNewLine]",
+ RowBox[{"{",
+  RowBox[{
+   RowBox[{
+    RowBox[{"(",
+     RowBox[{"matJ", "=",
+      RowBox[{"(", GridBox[{
+         {
+          RowBox[{
+           SubscriptBox["\[PartialD]", "\[Xi]"],
+           RowBox[{"x", "[",
+            RowBox[{"\[Xi]", ",", "\[Eta]"}], "]"}]}],
+          RowBox[{
+           SubscriptBox["\[PartialD]", "\[Eta]"],
+           RowBox[{"x", "[",
+            RowBox[{"\[Xi]", ",", "\[Eta]"}], "]"}]}]},
+         {
+          RowBox[{
+           SubscriptBox["\[PartialD]", "\[Xi]"],
+           RowBox[{"y", "[",
+            RowBox[{"\[Xi]", ",", "\[Eta]"}], "]"}]}],
+          RowBox[{
+           SubscriptBox["\[PartialD]", "\[Eta]"],
+           RowBox[{"y", "[",
+            RowBox[{"\[Xi]", ",", "\[Eta]"}], "]"}]}]}
+        }], ")"}]}], ")"}], "//", "MatrixForm"}], ",", "\[IndentingNewLine]",
+   RowBox[{
+    RowBox[{"(",
+     RowBox[{"ivmJ", "=",
+      RowBox[{"(", GridBox[{
+         {
+          RowBox[{
+           SubscriptBox["\[PartialD]", "x"],
+           RowBox[{"\[Xi]", "[",
+            RowBox[{"x", ",", "y"}], "]"}]}],
+          RowBox[{
+           SubscriptBox["\[PartialD]", "y"],
+           RowBox[{"\[Xi]", "[",
+            RowBox[{"x", ",", "y"}], "]"}]}]},
+         {
+          RowBox[{
+           SubscriptBox["\[PartialD]", "x"],
+           RowBox[{"\[Eta]", "[",
+            RowBox[{"x", ",", "y"}], "]"}]}],
+          RowBox[{
+           SubscriptBox["\[PartialD]", "y"],
+           RowBox[{"\[Eta]", "[",
+            RowBox[{"x", ",", "y"}], "]"}]}]}
+        }], ")"}]}], ")"}], "//", "MatrixForm"}], ",", "\[IndentingNewLine]",
+   RowBox[{
+    RowBox[{"(",
+     RowBox[{"invJ", "=",
+      RowBox[{"Inverse", "[", "matJ", "]"}]}], ")"}], "//", "MatrixForm"}]}],
+  "}"}], "\[IndentingNewLine]",
+ RowBox[{"MatrixForm", "/@",
+  RowBox[{"(",
+   RowBox[{"invJdiff", "=",
+    RowBox[{
+     RowBox[{
+      RowBox[{"Coefficient", "[",
+       RowBox[{
+        RowBox[{"Dt", "[", "invJ", "]"}], ",", "#"}], "]"}], "&"}], "/@",
+     RowBox[{"{",
+      RowBox[{
+       RowBox[{"Dt", "[", "\[Xi]", "]"}], ",",
+       RowBox[{"Dt", "[", "\[Eta]", "]"}]}], "}"}]}]}],
+   ")"}]}], "\[IndentingNewLine]",
+ RowBox[{"MatrixForm", "/@",
+  RowBox[{"(",
+   RowBox[{"ivmJdiff", "=",
+    RowBox[{
+     RowBox[{
+      RowBox[{"Coefficient", "[",
+       RowBox[{
+        RowBox[{"Plus", "@@",
+         RowBox[{"(",
+          RowBox[{
+           RowBox[{"{",
+            RowBox[{
+             RowBox[{
+              SubscriptBox["\[PartialD]", "x"], "ivmJ"}], ",",
+             RowBox[{
+              SubscriptBox["\[PartialD]", "y"], "ivmJ"}]}], "}"}], "*",
+           RowBox[{"(",
+            RowBox[{"matJ", ".",
+             RowBox[{"{",
+              RowBox[{
+               RowBox[{"Dt", "[", "\[Xi]", "]"}], ",",
+               RowBox[{"Dt", "[", "\[Eta]", "]"}]}], "}"}]}], ")"}]}],
+          ")"}]}], ",", "#"}], "]"}], "&"}], "/@",
+     RowBox[{"{",
+      RowBox[{
+       RowBox[{"Dt", "[", "\[Xi]", "]"}], ",",
+       RowBox[{"Dt", "[", "\[Eta]", "]"}]}], "}"}]}]}], ")"}]}]}], "Input"]
+}]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"(",
+    RowBox[{
+     RowBox[{"(",
+      RowBox[{
+       RowBox[{"$PrePrint", "@", "Reverse"}], "/@",
+       RowBox[{"(",
+        RowBox[{"Flatten", "@",
+         RowBox[{"MapThread", "[",
+          RowBox[{"Equal", ",",
+           RowBox[{"{",
+            RowBox[{"invJdiff", ",", "ivmJdiff"}], "}"}], ",", "3"}], "]"}]}],
+         ")"}]}], ")"}], "/.",
+     RowBox[{"(",
+      RowBox[{"J", "\[Rule]",
+       RowBox[{"Det", "[",
+        RowBox[{"$PrePrint", "@", "matJ"}], "]"}]}], ")"}]}], ")"}],
+   "\[LeftDoubleBracket]", ";;", "\[RightDoubleBracket]"}], "//",
+  "TableForm"}], "\[IndentingNewLine]",
+ RowBox[{
+  RowBox[{"And", "@@", "%"}], ";"}], "\[IndentingNewLine]",
+ RowBox[{
+  RowBox[{"Solve", "[",
+   RowBox[{"%", ",",
+    RowBox[{"{",
+     RowBox[{
+      SubscriptBox["\[Xi]", "xx"], ",",
+      SubscriptBox["\[Xi]", "xy"], ",",
+      SubscriptBox["\[Xi]", "yy"], ",",
+      SubscriptBox["\[Eta]", "xx"], ",",
+      SubscriptBox["\[Eta]", "xy"], ",",
+      SubscriptBox["\[Eta]", "yy"]}], "}"}]}], "]"}], ";"}]}], "Input"]
+}]]
+}]],
+
+Cell[CellGroupData[{
+
+Cell["NACA", "Chapter"],
+
 Cell[BoxData[
  RowBox[{"Module", "[",
   RowBox[{
@@ -925,7 +1166,12 @@ Cell[BoxData[
    RowBox[{"{",
     RowBox[{"\[Xi]", ",", "0", ",", "1.0014682552635628`"}], "}"}]}],
   "]"}]], "Input"]
+}]]
 }]],
+
+Cell[CellGroupData[{
+
+Cell["Native solve", "Chapter"],
 
 Cell[BoxData[
  RowBox[{"sol1", "=",
@@ -1872,7 +2118,12 @@ Cell[BoxData[
    RowBox[{"AspectRatio", "\[Rule]", "Automatic"}]}], "]"}]], "Input"]
 }]],
 
-Cell[BoxData["Mesh"], "Input"],
+Cell[BoxData["Mesh"], "Input"]
+}]],
+
+Cell[CellGroupData[{
+
+Cell["Native mesh", "Chapter"],
 
 Cell[CellGroupData[{
 
@@ -2058,6 +2309,7 @@ Cell[CellGroupData[{
 
 Cell["1+1", "ExternalLanguage",
  CellEvaluationLanguage->"Julia"]
+}]]
 }]]
 }]
 (* End of Notebook Content *)

@@ -125,13 +125,14 @@ interpolated_y = Array{Float64}(undef, (length(v) for v in y_lo)...);
 #= @btime =# transfinite_interpolate_2d!(interpolated_x, x_lo, x_hi)
 #= @btime =# transfinite_interpolate_2d!(interpolated_y, y_lo, y_hi)
 p = plot(; xlims=(-5,5), ylims=(-5,5), aspect_ratio=:equal)
-# p = grid_plot!(p, interpolated_x, interpolated_y; title="tf", mirror=true, xlims=(-5, 5), ylims=(-5, 5), aspect_ratio=:equal)
+p = grid_plot!(p, interpolated_x, interpolated_y; title="tf", mirror=true, xlims=(-5, 5), ylims=(-5, 5), aspect_ratio=:equal)
+display(p)
 # savefig(normpath(joinpath(@__DIR__, "img/tf-hO.png")))
 
 include(normpath(joinpath(@__DIR__, "../src/elliptic-grid-gen.jl")))
 import .elliptic_grid_gen: inverted_poisson_2d_jacobi_step   , inverted_poisson_2d_jacobi_step!   ,
                            inverted_poisson_2d_jacobi_iterate, inverted_poisson_2d_jacobi_iterate!
-P = Q = ((x, y)->(norm([x, y]-[-3., 3.])) < 1. ? 20. : 0. )
+P = Q = ((x, y)->(norm([x, y]-[-3., 3.])) < 1. ? 1. : 0. )
 inverted_poisson_2d_jacobi_iterate!(interpolated_x, interpolated_y, 1e-2, nothing, P, Q, 2.)
 p = plot(; xlims=(-5,5), ylims=(-5,5), aspect_ratio=:equal)
 p = grid_plot!(p, interpolated_x, interpolated_y; title="el", mirror=true, xlims=(-5, 5), ylims=(-5, 5), aspect_ratio=:equal)
